@@ -1,5 +1,7 @@
 import lenz.htw.aipne.Server;
 
+import java.io.IOException;
+
 /**
  * Created by eve on 4/11/16.
  */
@@ -10,9 +12,15 @@ public class Launcher {
         Server.main(serverArgs);
     };
 
-    public static void main(String[] args) {
+    public static void main(String... args) throws IOException {
         new Thread(serverLauncher).start();
 
-        System.out.println("Welcome to Evario-Land v.0.1");
+        String hostName = null;
+        if (args.length >= 1) {
+            hostName = args[0];
+        }
+        for (int i = 1; i <= 3; i++) {
+            new Client(hostName, "Gamer" + i);
+        }
     }
 }
