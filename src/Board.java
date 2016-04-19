@@ -3,8 +3,14 @@
  */
 public class Board {
 
-    final int INVALID_FIELD = 0;
-    final int EMPTY_FIELD = -1;
+    static final String PRINT_ORIGIN = "   ";
+    static final String PRINT_ROW_DELIMITER = ": ";
+    static final String PRINT_SPACE = " ";
+    static final String PRINT_FIELD_FORMAT = "%02d";
+    static final String PRINT_NEW_LINE = "\n";
+
+    static final int INVALID_FIELD = 0;
+    static final int EMPTY_FIELD = -1;
 
     final int[][] fields = new int[8][15];
 
@@ -19,21 +25,25 @@ public class Board {
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        StringBuilder header = new StringBuilder("   ");
+        StringBuilder header = new StringBuilder(PRINT_ORIGIN);
 
         for (int y = fields.length - 1; y >= 0; y--) {
             int[] row = fields[y];
-            builder.append(y + ": ");
+            builder.append(y + PRINT_ROW_DELIMITER);
             for (int x = 0; x < row.length; x++) {
+                int field = row[x];
                 if (y == 0) {
-                    String xHeader = String.format("%02d", x);
-                    header.append(xHeader + " ");
+                    String xFormatted = String.format(PRINT_FIELD_FORMAT, x);
+                    header.append(xFormatted).append(PRINT_SPACE);
                 }
-                String field = String.format("%02d", row[x]);
-                builder.append(field + " ");
+                if (INVALID_FIELD == field) {
+                    continue;
+                }
+                String fieldFormatted = String.format(PRINT_FIELD_FORMAT, field);
+                builder.append(fieldFormatted).append(PRINT_SPACE);
             }
-            builder.append("\n");
+            builder.append(PRINT_NEW_LINE);
         }
-        return header.toString() + "\n" + builder.toString();
+        return header.toString() + PRINT_NEW_LINE + builder.toString();
     }
 }
