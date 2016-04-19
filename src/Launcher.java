@@ -8,7 +8,7 @@ import java.io.IOException;
 public class Launcher {
 
     static final Runnable serverLauncher = () -> {
-        String[] serverArgs = {"800", "600", "5"};
+        String[] serverArgs = {"800", "600", "5", "noanim"};
         Server.main(serverArgs);
     };
 
