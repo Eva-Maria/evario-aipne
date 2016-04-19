@@ -9,7 +9,11 @@ public class Board {
     final int[][] fields = new int[8][15];
 
     public Board() {
-
+        for (int y = fields.length - 1; y >= 0; y--) {
+            for (int x = 0; x < y * 2 + 1; x++) {
+                fields[y][x] = EMPTY_FIELD;
+            }
+        }
     }
 
     @Override
@@ -17,15 +21,15 @@ public class Board {
         StringBuilder builder = new StringBuilder();
         StringBuilder header = new StringBuilder("   ");
 
-        for (int i = fields.length - 1; i >= 0; i--) {
-            int[] row = fields[i];
-            builder.append(i + ": ");
-            for (int j = 0; j < row.length; j++) {
-                if (i == 0) {
-                    String x = String.format("%02d", j);
-                    header.append(x + " ");
+        for (int y = fields.length - 1; y >= 0; y--) {
+            int[] row = fields[y];
+            builder.append(y + ": ");
+            for (int x = 0; x < row.length; x++) {
+                if (y == 0) {
+                    String xHeader = String.format("%02d", x);
+                    header.append(xHeader + " ");
                 }
-                String field = String.format("%02d", row[j]);
+                String field = String.format("%02d", row[x]);
                 builder.append(field + " ");
             }
             builder.append("\n");
