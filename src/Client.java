@@ -12,6 +12,9 @@ import java.io.IOException;
 public class Client implements Runnable {
 
     public static final String INVALID_MOVE_EXCEPTION = "You got kicked because your move was invalid!";
+    public static final String TEAM_NAME = "Evario_";
+    public static final String ASSET_IMG = "assets/zebra.png";
+
     private final BufferedImage logo;
     private final Thread thread;
     private String name;
@@ -19,8 +22,8 @@ public class Client implements Runnable {
 
     public Client(String hostName, String name) throws IOException {
         this.hostName = hostName;
-        this.name = "Evario_" + name;
-        logo = ImageIO.read(new File("assets/zebra.png"));
+        this.name = TEAM_NAME + name;
+        logo = ImageIO.read(new File(ASSET_IMG));
 
         thread = new Thread(this);
         thread.start();

@@ -8,19 +8,31 @@ import java.io.IOException;
 public class Launcher {
 
     static final Runnable serverLauncher = () -> {
-        String[] serverArgs = {"800", "600", "5", "noanim"};
-        Server.main(serverArgs);
+        try {
+            String[] serverArgs = {"800", "600", "5", "noanim"};
+            Server.main(serverArgs);
+        } catch (Exception e) {
+            System.out.println("Server is already running. Do nothing.");
+        }
     };
 
     public static void main(String... args) throws IOException {
-        new Thread(serverLauncher).start();
 
-        String hostName = null;
+        String hostName = "127.0.0.1";
+
         if (args.length >= 1) {
             hostName = args[0];
         }
-        for (int i = 1; i <= 3; i++) {
-            new Client(hostName, "Gamer" + i);
+
+        if (args.length >= 2) {
+            if (args[1].equals("auto")) {
+                new Thread(serverLauncher).start();
+                new Client(hostName, 2 + "");
+                new Client(hostName, 3 + "");
+                return;
+            }
         }
+
+        new Client(hostName, 1 + "");
     }
 }
