@@ -36,9 +36,10 @@ public class Client implements Runnable {
         while (!thread.isInterrupted()) {
             try {
                 interact(networkClient, board);
+                Thread.yield(); //TODO: remove before practise - because one system is hosting all threads.
             } catch (RuntimeException e) {
                 if (e.getMessage().startsWith(INVALID_MOVE_EXCEPTION)) {
-
+                    System.out.println(networkClient.getMyPlayerNumber() + " was kicked.");
                     thread.interrupt();
                 } else {
                     throw e;
@@ -48,15 +49,27 @@ public class Client implements Runnable {
     }
 
     private void interact(NetworkClient networkClient, Board board) throws RuntimeException {
-        Move move;
-        while ((move = networkClient.receiveMove()) != null) {
-            board.makeMove(move, 0);
-        }
+        int currentPlayer = Board.FIRST_PLAYER;
+        Move move = networkClient.receiveMove();
+        while (true) {
+            if (move == null) {
+                move = generateMyMove();
+                networkClient.sendMove(move);
 
-        if (networkClient.getMyPlayerNumber() == Board.FIRST_PLAYER) {
-            move = new Move(4, 7, 3, 7);
-            networkClient.sendMove(move);
-        }
+            }
+            board.makeMove(move, currentPlayer);
+            System.out.println(board.toString());
 
+            if (currentPlayer == Board.THIRD_PLAYER) {
+                System.out.println("////////////////////////////////////");
+                return;
+            }
+            currentPlayer++;
+        }
+    }
+
+    private Move generateMyMove() {
+        Move move = new Move(4, 7, 3, 7);
+        return move;
     }
 }

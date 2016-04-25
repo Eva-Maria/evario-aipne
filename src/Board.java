@@ -53,7 +53,9 @@ public class Board {
     }
 
     public void makeMove(Move move, int player) {
-
+        //TODO: field valid? is field owner?
+        setField(move.fromY, move.fromX, EMPTY_FIELD);
+        setField(move.toY, move.toX, player);
     }
 
     static int[] translateFieldsClockwise(int y, int x) {
