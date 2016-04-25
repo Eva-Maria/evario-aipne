@@ -19,24 +19,39 @@ public class Board {
     public Board() {
         initEmptyFields();
         initPlayer(FIRST_PLAYER);
-//        translateFieldsClockwise();
+        initPlayer(SECOND_PLAYER);
+        initPlayer(THIRD_PLAYER);
     }
 
     private void initPlayer(int player) {
-        fields[7][4] = player;
-        fields[7][5] = player;
-        fields[7][6] = player;
-        fields[7][7] = player;
-        fields[7][8] = player;
-        fields[7][9] = player;
-        fields[7][10] = player;
-        fields[6][6] = player;
+        setField(7, 4, player);
+        setField(7, 5, player);
+        setField(7, 6, player);
+        setField(7, 7, player);
+        setField(7, 8, player);
+        setField(7, 9, player);
+        setField(7, 10, player);
+        setField(6, 6, player);
+    }
+
+    void setField(int y, int x, int player) {
+        int[] yAndX = new int[]{y, x};
+        if (player == SECOND_PLAYER || player == THIRD_PLAYER) {
+            yAndX = translateFieldsClockwise(yAndX[0], yAndX[1]);
+        }
+        if (player == SECOND_PLAYER) {
+            yAndX = translateFieldsClockwise(yAndX[0], yAndX[1]);
+        }
+
+        fields[yAndX[0]][yAndX[1]] = player;
     }
 
     static int[] translateFieldsClockwise(int y, int x) {
+        //TODO: always use int[] instead of y and x? - in place replacement?
         System.out.print(y + "," + x + " -> ");
+
         int newX = 2 * y - x;
-        int newY = (int) Math.ceil((14f - x) / 2f);
+        int newY = (int) Math.ceil((14 - x) / 2f);
 
         System.out.println(newY + "," + newX);
 
