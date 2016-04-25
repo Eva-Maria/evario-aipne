@@ -38,15 +38,15 @@ public class BoardTest {
 
     @Test
     public void testInitAndToString() {
-        Board board = new Board();
+        Board board = new Board(Board.FIRST_PLAYER);
         String asString = board.toString();
-        String expected = "   00 01 02 03 04 05 06 07 08 09 10 11 12 13 14 \n" +
-                "7: -1 -1 -1 -1 01 01 01 01 01 01 01 -1 -1 -1 -1 \n" +
-                "6: -1 -1 -1 -1 -1 -1 01 -1 -1 -1 -1 -1 -1 \n" +
-                "5: 02 02 -1 -1 -1 -1 -1 -1 -1 03 03 \n" +
-                "4: 02 02 02 -1 -1 -1 03 03 03 \n" +
-                "3: 02 02 -1 -1 -1 03 03 \n" +
-                "2: 02 -1 -1 -1 03 \n" +
+        String expected = "0  00 01 02 03 04 05 06 07 08 09 10 11 12 13 14 \n" +
+                "7: -1 -1 -1 -1 00 00 00 00 00 00 00 -1 -1 -1 -1 \n" +
+                "6: -1 -1 -1 -1 -1 -1 00 -1 -1 -1 -1 -1 -1 \n" +
+                "5: 01 01 -1 -1 -1 -1 -1 -1 -1 02 02 \n" +
+                "4: 01 01 01 -1 -1 -1 02 02 02 \n" +
+                "3: 01 01 -1 -1 -1 02 02 \n" +
+                "2: 01 -1 -1 -1 02 \n" +
                 "1: -1 -1 -1 \n" +
                 "0: -1 \n";
         Assert.assertEquals(expected, asString);

@@ -19,7 +19,6 @@ public class Client implements Runnable {
     private final Thread thread;
     private String name;
     private String hostName;
-    private final Board board = new Board();
 
     public Client(String hostName, String name) throws IOException {
         this.hostName = hostName;
@@ -33,11 +32,13 @@ public class Client implements Runnable {
     @Override
     public void run() {
         NetworkClient networkClient = new NetworkClient(hostName, name, logo);
+        Board board = new Board(networkClient.getMyPlayerNumber());
         while (!thread.isInterrupted()) {
             try {
-                interact(networkClient);
+                interact(networkClient, board);
             } catch (RuntimeException e) {
                 if (e.getMessage().startsWith(INVALID_MOVE_EXCEPTION)) {
+
                     thread.interrupt();
                 } else {
                     throw e;
@@ -46,13 +47,16 @@ public class Client implements Runnable {
         }
     }
 
-    private void interact(NetworkClient networkClient) throws RuntimeException {
+    private void interact(NetworkClient networkClient, Board board) throws RuntimeException {
         Move move;
         while ((move = networkClient.receiveMove()) != null) {
-            // update internal model
+            board.makeMove(move, 0);
         }
 
-        move = new Move(4, 7, 3, 7);
-        networkClient.sendMove(move);
+        if (networkClient.getMyPlayerNumber() == Board.FIRST_PLAYER) {
+            move = new Move(4, 7, 3, 7);
+            networkClient.sendMove(move);
+        }
+
     }
 }
