@@ -8,12 +8,37 @@ public class Board {
     static final String PRINT_SPACE = " ";
     static final String PRINT_FIELD_FORMAT = "%02d";
     static final String PRINT_NEW_LINE = "\n";
-
     static final int EMPTY_FIELD = -1;
 
-    final int[][] fields = new int[8][];
+    static final int FIRST_PLAYER = 1;
+    static final int SECOND_PLAYER = 2;
+    static final int THIRD_PLAYER = 3;
+
+    final int[][] fields = new int[8][]; //[y][x]
 
     public Board() {
+        initEmptyFields();
+        initPlayer(FIRST_PLAYER);
+        rotateFields();
+
+    }
+
+    private void initPlayer(int player) {
+        fields[7][4] = player;
+        fields[7][5] = player;
+        fields[7][6] = player;
+        fields[7][7] = player;
+        fields[7][8] = player;
+        fields[7][9] = player;
+        fields[7][10] = player;
+        fields[6][6] = player;
+    }
+
+    private void rotateFields() {
+
+    }
+
+    private void initEmptyFields() {
         for (int y = fields.length - 1; y >= 0; y--) {
             int rowLength = y * 2 + 1;
             fields[y] = new int[rowLength];

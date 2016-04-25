@@ -19,6 +19,7 @@ public class Client implements Runnable {
     private final Thread thread;
     private String name;
     private String hostName;
+    private final Board board = new Board();
 
     public Client(String hostName, String name) throws IOException {
         this.hostName = hostName;
