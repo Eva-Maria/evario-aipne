@@ -19,8 +19,7 @@ public class Board {
     public Board() {
         initEmptyFields();
         initPlayer(FIRST_PLAYER);
-        rotateFields();
-
+//        translateFieldsClockwise();
     }
 
     private void initPlayer(int player) {
@@ -34,8 +33,17 @@ public class Board {
         fields[6][6] = player;
     }
 
-    private void rotateFields() {
-
+    static int[] translateFieldsClockwise(int y, int x) {
+        if (y == 7 && x == 0) {
+            return new int[]{7, 14};
+        }
+        if (y == 7 && x == 14) {
+            return new int[]{0, 0};
+        }
+        if (y == 0 && x == 0) {
+            return new int[]{7, 0};
+        }
+        throw new IllegalArgumentException("unknown: " + y + ", " + x);
     }
 
     private void initEmptyFields() {
