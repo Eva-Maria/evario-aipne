@@ -34,16 +34,27 @@ public class Board {
     }
 
     static int[] translateFieldsClockwise(int y, int x) {
-        if (y == 7 && x == 0) {
-            return new int[]{7, 14};
+        System.out.print(y + "," + x + " -> ");
+        int newX = 2 * y - x;
+        int newY = (int) Math.ceil((14f - x) / 2f);
+
+        System.out.println(newY + "," + newX);
+
+        if (!isOnField(newY, newX)) {
+            throw new IllegalStateException("New coordinates are invalid");
         }
-        if (y == 7 && x == 14) {
-            return new int[]{0, 0};
+        return new int[]{newY, newX};
+    }
+
+    static boolean isOnField(int y, int x) {
+        if (y < 0 || y > 8) {
+            return false;
         }
-        if (y == 0 && x == 0) {
-            return new int[]{7, 0};
+        if (x < 0 || x > y * 2 + 1) {
+            return false;
         }
-        throw new IllegalArgumentException("unknown: " + y + ", " + x);
+
+        return true;
     }
 
     private void initEmptyFields() {

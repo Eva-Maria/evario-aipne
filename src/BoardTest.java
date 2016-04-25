@@ -21,15 +21,19 @@ public class BoardTest {
 
     @Test
     public void testTranslatingIsIdempotent() throws Exception {
-        Board board = new Board();
+        for (int y = 7; y >= 0; y--) {
+            int rowLength = y * 2 + 1;
+            for (int x = 0; x < rowLength; x++) {
+                int[] yAndX = new int[]{y, x};
 
-        int[] yAndX = new int[]{7, 0};
+                yAndX = Board.translateFieldsClockwise(yAndX[0], yAndX[1]);
+                yAndX = Board.translateFieldsClockwise(yAndX[0], yAndX[1]);
+                yAndX = Board.translateFieldsClockwise(yAndX[0], yAndX[1]);
 
-        yAndX = Board.translateFieldsClockwise(yAndX[0], yAndX[1]);
-        yAndX = Board.translateFieldsClockwise(yAndX[0], yAndX[1]);
-        yAndX = Board.translateFieldsClockwise(yAndX[0], yAndX[1]);
-
-        Assert.assertTrue(Arrays.equals(yAndX, new int[]{7, 0}));
+                Assert.assertTrue(Arrays.equals(yAndX, new int[]{y, x}));
+                System.out.println("///////////");
+            }
+        }
     }
 
     @Test
