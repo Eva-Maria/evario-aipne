@@ -31,6 +31,14 @@ public class Launcher {
                 new Client(hostName, 3 + "");
                 return;
             }
+
+            if (args[1].equals("fullauto")) {
+                new Thread(serverLauncher).start();
+                new Client(hostName, 1 + "");
+                new Client(hostName, 2 + "");
+                new Client(hostName, 3 + "");
+                return;
+            }
         }
 
         new Client(hostName, 1 + "");
