@@ -6,20 +6,20 @@ public class L {
     final static String blackColor = (char) 27 + "[30m";
 
     final static String blueColor = (char) 27 + "[34m";
-    final static String yellowColor = (char) 27 + "[33m";
+    final static String redColor = (char) 27 + "[31m";
     final static String greenColor = (char) 27 + "[32m";
 
     static void d(int player, String msg) {
         String color = blackColor;
         switch (player) {
             case Board.FIRST_PLAYER:
-                color = blueColor;
+                color = redColor;
                 break;
             case Board.SECOND_PLAYER:
-                color = yellowColor;
+                color = greenColor;
                 break;
             case Board.THIRD_PLAYER:
-                color = greenColor;
+                color = blueColor;
                 break;
         }
 

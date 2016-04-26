@@ -26,9 +26,9 @@ public class BoardTest {
             for (int x = 0; x < rowLength; x++) {
                 int[] yAndX = new int[]{y, x};
 
-                yAndX = Board.translateFieldsClockwise(yAndX[0], yAndX[1]);
-                yAndX = Board.translateFieldsClockwise(yAndX[0], yAndX[1]);
-                yAndX = Board.translateFieldsClockwise(yAndX[0], yAndX[1]);
+                yAndX = Board.translateFieldsCounterClockwise(yAndX[0], yAndX[1]);
+                yAndX = Board.translateFieldsCounterClockwise(yAndX[0], yAndX[1]);
+                yAndX = Board.translateFieldsCounterClockwise(yAndX[0], yAndX[1]);
 
                 Assert.assertTrue(Arrays.equals(yAndX, new int[]{y, x}));
                 System.out.println("///////////");

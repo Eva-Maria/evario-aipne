@@ -51,28 +51,46 @@ public class Board {
     private int[] getFieldCoordinates(int y, int x, int player) {
         int[] yAndX = new int[]{y, x};
         if (player == SECOND_PLAYER) {
-            yAndX = translateFieldsClockwise(yAndX[0], yAndX[1]);
+            yAndX = translateFieldsCounterClockwise(yAndX[0], yAndX[1]);
         }
         if (player == SECOND_PLAYER || player == THIRD_PLAYER) {
-            yAndX = translateFieldsClockwise(yAndX[0], yAndX[1]);
+            yAndX = translateFieldsCounterClockwise(yAndX[0], yAndX[1]);
         }
         return yAndX;
     }
 
-    public void makeMove(Move move, int player) {
+    public boolean makeMoveIfValid(Move move, int player) {
+//        if(!isOnField(move.fromY, move.fromX)) {
+//            return false;
+//        }
+//        if(!isOnField(move.toY, move.toX)) {
+//            return false;
+//        }
+
         if (fields[move.fromY][move.fromX] != player) {
-//            System.out.println("ILLEGAL MOVE for player " + player + ": " + move);
-            throw new IllegalStateException("Move not allowed for player " + player + ": " + move);
+            return false;
         }
+
+//        int[] fromYAndXTranslated = getFieldCoordinates(move.fromY, move.fromX, player);
+//        int[] toYAndXTranslated = getFieldCoordinates(move.toY, move.toX, player);
+//        // if x even, move left or right
+//        if (!(fromYAndXTranslated[1] % 2 == 0 && toYAndXTranslated[1] % 2 != 0 && fromYAndXTranslated[0] == toYAndXTranslated[0])) {
+//            return false;
+//        }
+//
+//        if (!(fromYAndXTranslated[1] % 2 != 0 && toYAndXTranslated[1] % 2 == 0 && fromYAndXTranslated[0] == toYAndXTranslated[0] - 1)) {
+//            return false;
+//        }
 
         //TODO: check for move distance
         fields[move.fromY][move.fromX] = EMPTY_FIELD;
         fields[move.toY][move.toX] = player;
 
         lastMove = move;
+        return true;
     }
 
-    static int[] translateFieldsClockwise(int y, int x) {
+    static int[] translateFieldsCounterClockwise(int y, int x) {
         //TODO: always use int[] instead of y and x? - in place replacement?
 
         int newX = 2 * y - x;

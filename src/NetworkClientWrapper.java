@@ -18,6 +18,10 @@ public class NetworkClientWrapper {
         this.networkClient = new NetworkClient(hostName, name, logo);
     }
 
+    int getTimeLimitInSeconds() {
+        return this.networkClient.getTimeLimitInSeconds();
+    }
+
     int getMyPlayerNumber() {
         return this.networkClient.getMyPlayerNumber();
     }

@@ -27,9 +27,10 @@ public class Client implements Runnable {
         thread = new Thread(this);
     }
 
-    public Client(String hostName, String name) throws IOException {
+    public Client(String hostName) throws IOException {
         this.hostName = hostName;
-        this.name = TEAM_NAME + name;
+        int random = (int) (Math.random() * 10);
+        this.name = TEAM_NAME + random;
         logo = ImageIO.read(new File(ASSET_IMG));
 
         thread = new Thread(this);
@@ -41,19 +42,14 @@ public class Client implements Runnable {
         NetworkClientWrapper networkClient = getNetworkClient();
         int myPlayerNumber = networkClient.getMyPlayerNumber();
         Board board = new Board(myPlayerNumber);
-        boolean isInterrupted = false;
 
-        while (!thread.isInterrupted() && !isInterrupted) {
-            try {
-                interact(networkClient, board);
-            } catch (RuntimeException e) {
-                if (e.getMessage().startsWith(INVALID_MOVE_EXCEPTION)) {
-                    L.d(myPlayerNumber, "kicked out.");
-                    thread.interrupt();
-                    isInterrupted = true;
-                } else {
-                    throw e;
-                }
+        try {
+            interact(networkClient, board);
+        } catch (RuntimeException e) {
+            if (e.getMessage().startsWith(INVALID_MOVE_EXCEPTION)) {
+                L.d(myPlayerNumber, "kicked out.");
+            } else {
+                throw e;
             }
         }
     }
@@ -70,23 +66,32 @@ public class Client implements Runnable {
         int currentPlayer = Board.FIRST_PLAYER;
         int myPlayerNumber = networkClient.getMyPlayerNumber();
 
+        boolean[] isStillPlaying = {true, true, true};
+
         while (true) {
-            Move move = networkClient.receiveMove(currentPlayer);
-            L.d(myPlayerNumber, "NC: move received for player " + currentPlayer + ": " + move);
+            if (!isStillPlaying[currentPlayer]) {
+                currentPlayer = ++currentPlayer % 3;
+                continue;
+            }
+
+            Move move = networkClient.receiveMove(0);
 
             if (move == null) {
                 move = brain.generateMyMove(myPlayerNumber);
-                L.d(myPlayerNumber, "NC: move sending for player " + currentPlayer + ": " + move);
-                networkClient.sendMove(move, myPlayerNumber);
+                networkClient.sendMove(move, 0);
+                move = networkClient.receiveMove(0);
                 currentPlayer = myPlayerNumber;
             }
 
-            if (currentPlayer == Board.THIRD_PLAYER) {
-                L.d(myPlayerNumber, "// ROUND DONE //////");
-                return;
-            } else {
-                currentPlayer++;
+            L.d(myPlayerNumber, "currentPlayer " + currentPlayer + " with move " + move);
+
+            boolean isValidMove = board.makeMoveIfValid(move, currentPlayer);
+
+            if (!isValidMove) {
+                isStillPlaying[currentPlayer] = false;
             }
+
+            currentPlayer = ++currentPlayer % 3;
         }
     }
 
