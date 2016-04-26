@@ -23,7 +23,8 @@ public class NetworkClientWrapper {
     }
 
     Move receiveMove(int currentPlayer) {
-        return this.networkClient.receiveMove();
+        Move move = this.networkClient.receiveMove();
+        return move;
     }
 
     void sendMove(Move move, int currentPlayer) {

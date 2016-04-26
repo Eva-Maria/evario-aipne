@@ -19,6 +19,8 @@ public class Client implements Runnable {
     private String name;
     private String hostName;
 
+    private Brain brain = new Brain();
+
     public Client() {
         //only for testing
         name = "Test";
@@ -37,16 +39,16 @@ public class Client implements Runnable {
     @Override
     public void run() {
         NetworkClientWrapper networkClient = getNetworkClient();
-        Board board = new Board(networkClient.getMyPlayerNumber());
+        int myPlayerNumber = networkClient.getMyPlayerNumber();
+        Board board = new Board(myPlayerNumber);
         boolean isInterrupted = false;
 
         while (!thread.isInterrupted() && !isInterrupted) {
             try {
                 interact(networkClient, board);
-                Thread.yield(); //TODO: remove before practise - because one system is hosting all threads.
             } catch (RuntimeException e) {
                 if (e.getMessage().startsWith(INVALID_MOVE_EXCEPTION)) {
-                    System.out.println(networkClient.getMyPlayerNumber() + " was kicked.");
+                    L.d(myPlayerNumber, "kicked out.");
                     thread.interrupt();
                     isInterrupted = true;
                 } else {
@@ -66,42 +68,26 @@ public class Client implements Runnable {
 
     private void interact(NetworkClientWrapper networkClient, Board board) throws RuntimeException {
         int currentPlayer = Board.FIRST_PLAYER;
+        int myPlayerNumber = networkClient.getMyPlayerNumber();
+
         while (true) {
-            int myPlayerNumber = networkClient.getMyPlayerNumber();
             Move move = networkClient.receiveMove(currentPlayer);
+            L.d(myPlayerNumber, "NC: move received for player " + currentPlayer + ": " + move);
 
             if (move == null) {
-                move = generateMyMove(currentPlayer);
-                networkClient.sendMove(move, currentPlayer);
-                move = networkClient.receiveMove(currentPlayer);
-                System.out.println("I am " + name + " with number " + myPlayerNumber + ", it is my turn: " + move);
-
-            } else {
-                System.out.println("I am " + name + " with number " + myPlayerNumber + ", it is player " + currentPlayer + "'s turn: " + move);
+                move = brain.generateMyMove(myPlayerNumber);
+                L.d(myPlayerNumber, "NC: move sending for player " + currentPlayer + ": " + move);
+                networkClient.sendMove(move, myPlayerNumber);
+                currentPlayer = myPlayerNumber;
             }
-
-            board.makeMove(move, currentPlayer);
-            System.out.println(board.toString());
 
             if (currentPlayer == Board.THIRD_PLAYER) {
-                System.out.println("/// ROUND DONE ///////////////////////////////////");
+                L.d(myPlayerNumber, "// ROUND DONE //////");
                 return;
+            } else {
+                currentPlayer++;
             }
-
-            currentPlayer++;
-            System.out.println("I am " + name + " with number " + myPlayerNumber + ", next player will be " + currentPlayer);
         }
     }
 
-    private Move generateMyMove(int myPlayerNumber) {
-        switch (myPlayerNumber) {
-            case Board.FIRST_PLAYER:
-                return new Move(4, 7, 3, 7);
-//            case Board.SECOND_PLAYER:
-//                return new Move(0, 5, 1, 6);
-//            case Board.THIRD_PLAYER:
-//                return new Move(6, 4, 5, 4);
-        }
-        return null;
-    }
 }

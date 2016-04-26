@@ -28,7 +28,8 @@ public class Board {
         initPlayer(FIRST_PLAYER);
         initPlayer(SECOND_PLAYER);
         initPlayer(THIRD_PLAYER);
-        System.out.println("Done init board for player " + myPlayerNumber);
+
+        L.d(myPlayerNumber, "Board initialized");
     }
 
     private void initPlayer(int player) {
