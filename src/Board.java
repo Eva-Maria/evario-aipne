@@ -20,6 +20,7 @@ public class Board {
     final int[][] fields = new int[8][]; //[y][x]
 
     private final int myPlayerNumber;
+    private Move lastMove;
 
     public Board(int myPlayerNumber) {
         this.myPlayerNumber = myPlayerNumber;
@@ -27,6 +28,7 @@ public class Board {
         initPlayer(FIRST_PLAYER);
         initPlayer(SECOND_PLAYER);
         initPlayer(THIRD_PLAYER);
+        System.out.println("Done init board for player " + myPlayerNumber);
     }
 
     private void initPlayer(int player) {
@@ -41,31 +43,41 @@ public class Board {
     }
 
     void setField(int y, int x, int player) {
-        int[] yAndX = new int[]{y, x};
-        if (player == SECOND_PLAYER || player == THIRD_PLAYER) {
-            yAndX = translateFieldsClockwise(yAndX[0], yAndX[1]);
-        }
-        if (player == SECOND_PLAYER) {
-            yAndX = translateFieldsClockwise(yAndX[0], yAndX[1]);
-        }
-
+        int[] yAndX = getFieldCoordinates(y, x, player);
         fields[yAndX[0]][yAndX[1]] = player;
     }
 
+    private int[] getFieldCoordinates(int y, int x, int player) {
+        int[] yAndX = new int[]{y, x};
+        if (player == SECOND_PLAYER) {
+            yAndX = translateFieldsClockwise(yAndX[0], yAndX[1]);
+        }
+        if (player == SECOND_PLAYER || player == THIRD_PLAYER) {
+            yAndX = translateFieldsClockwise(yAndX[0], yAndX[1]);
+        }
+        return yAndX;
+    }
+
     public void makeMove(Move move, int player) {
-        //TODO: field valid? is field owner?
-        setField(move.fromY, move.fromX, EMPTY_FIELD);
-        setField(move.toY, move.toX, player);
+        if (fields[move.fromY][move.fromX] != player) {
+//            System.out.println("ILLEGAL MOVE for player " + player + ": " + move);
+            throw new IllegalStateException("Move not allowed for player " + player + ": " + move);
+        }
+
+        //TODO: check for move distance
+        fields[move.fromY][move.fromX] = EMPTY_FIELD;
+        fields[move.toY][move.toX] = player;
+
+        lastMove = move;
     }
 
     static int[] translateFieldsClockwise(int y, int x) {
         //TODO: always use int[] instead of y and x? - in place replacement?
-        System.out.print(y + "," + x + " -> ");
 
         int newX = 2 * y - x;
         int newY = (int) Math.ceil((14 - x) / 2f);
 
-        System.out.println(newY + "," + newX);
+        System.out.println(y + "," + x + " -> " + newY + "," + newX);
 
         if (!isOnField(newY, newX)) {
             throw new IllegalStateException("New coordinates are invalid");
@@ -111,7 +123,14 @@ public class Board {
                     header.append(xFormatted).append(PRINT_SPACE);
                 }
                 String fieldFormatted = String.format(PRINT_FIELD_FORMAT, field);
-                builder.append(fieldFormatted).append(PRINT_SPACE);
+                builder.append(fieldFormatted);
+                if (lastMove != null && lastMove.toX == x && lastMove.toY == y) {
+                    builder.append("*");
+                } else if (lastMove != null && lastMove.fromX == x && lastMove.fromY == y) {
+                    builder.append("!");
+                } else {
+                    builder.append(PRINT_SPACE);
+                }
             }
             builder.append(PRINT_NEW_LINE);
         }
