@@ -24,13 +24,14 @@ public class BoardTest {
         for (int y = 7; y >= 0; y--) {
             int rowLength = y * 2 + 1;
             for (int x = 0; x < rowLength; x++) {
-                int[] yAndX = new int[]{y, x};
+                int[] expected = {x, y};
+                int[] xAndY = {x, y};
 
-                yAndX = Board.translateFieldsCounterClockwise(yAndX[0], yAndX[1]);
-                yAndX = Board.translateFieldsCounterClockwise(yAndX[0], yAndX[1]);
-                yAndX = Board.translateFieldsCounterClockwise(yAndX[0], yAndX[1]);
+                xAndY = Board.translateFieldsCounterClockwise(xAndY);
+                xAndY = Board.translateFieldsCounterClockwise(xAndY);
+                xAndY = Board.translateFieldsCounterClockwise(xAndY);
 
-                Assert.assertTrue(Arrays.equals(yAndX, new int[]{y, x}));
+                Assert.assertTrue(Arrays.equals(xAndY, expected));
                 System.out.println("///////////");
             }
         }
@@ -52,4 +53,9 @@ public class BoardTest {
         Assert.assertEquals(expected, asString);
     }
 
+
+    @Test
+    public void testValidMoves() {
+        Board board = new Board(Board.FIRST_PLAYER);
+    }
 }

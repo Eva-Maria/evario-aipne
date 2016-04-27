@@ -33,30 +33,29 @@ public class Board {
     }
 
     private void initPlayer(int player) {
-        setField(7, 4, player);
-        setField(7, 5, player);
-        setField(7, 6, player);
-        setField(7, 7, player);
-        setField(7, 8, player);
-        setField(7, 9, player);
-        setField(7, 10, player);
-        setField(6, 6, player);
+        setField(new int[]{4, 7}, player);
+        setField(new int[]{5, 7}, player);
+        setField(new int[]{6, 7}, player);
+        setField(new int[]{7, 7}, player);
+        setField(new int[]{8, 7}, player);
+        setField(new int[]{9, 7}, player);
+        setField(new int[]{10, 7}, player);
+        setField(new int[]{6, 6}, player);
     }
 
-    void setField(int y, int x, int player) {
-        int[] yAndX = getFieldCoordinates(y, x, player);
-        fields[yAndX[0]][yAndX[1]] = player;
+    void setField(int[] xAndY, int player) {
+        xAndY = getFieldCoordinates(xAndY, player);
+        fields[xAndY[1]][xAndY[0]] = player;
     }
 
-    private int[] getFieldCoordinates(int y, int x, int player) {
-        int[] yAndX = new int[]{y, x};
+    private int[] getFieldCoordinates(int[] xAndY, int player) {
         if (player == SECOND_PLAYER) {
-            yAndX = translateFieldsCounterClockwise(yAndX[0], yAndX[1]);
+            xAndY = translateFieldsCounterClockwise(xAndY);
         }
         if (player == SECOND_PLAYER || player == THIRD_PLAYER) {
-            yAndX = translateFieldsCounterClockwise(yAndX[0], yAndX[1]);
+            xAndY = translateFieldsCounterClockwise(xAndY);
         }
-        return yAndX;
+        return xAndY;
     }
 
     public boolean makeMoveIfValid(Move move, int player) {
@@ -90,25 +89,29 @@ public class Board {
         return true;
     }
 
-    static int[] translateFieldsCounterClockwise(int y, int x) {
-        //TODO: always use int[] instead of y and x? - in place replacement?
-
-        int newX = 2 * y - x;
-        int newY = (int) Math.ceil((14 - x) / 2f);
-
-        System.out.println(y + "," + x + " -> " + newY + "," + newX);
-
-        if (!isOnField(newY, newX)) {
-            throw new IllegalStateException("New coordinates are invalid");
-        }
-        return new int[]{newY, newX};
+    static boolean isMoveValid(Move move, int player, int[][] board) {
+        return false;
     }
 
-    static boolean isOnField(int y, int x) {
-        if (y < 0 || y > 8) {
+    static int[] translateFieldsCounterClockwise(int[] xAndY) {
+        int newX = 2 * xAndY[1] - xAndY[0];
+        int newY = (int) Math.ceil((14 - xAndY[0]) / 2f);
+
+        System.out.println(xAndY[0] + "," + xAndY[1] + " -> " + newY + "," + newX);
+
+        int[] newXAndY = {newX, newY};
+        if (!isOnField(newXAndY)) {
+            throw new IllegalStateException("New coordinates are invalid");
+        }
+
+        return newXAndY;
+    }
+
+    private static boolean isOnField(int[] newXAndY) {
+        if (newXAndY[1] < 0 || newXAndY[1] > 8) {
             return false;
         }
-        if (x < 0 || x > y * 2 + 1) {
+        if (newXAndY[0] < 0 || newXAndY[0] > newXAndY[1] * 2 + 1) {
             return false;
         }
 
