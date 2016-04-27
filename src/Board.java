@@ -1,5 +1,7 @@
 import lenz.htw.aipne.Move;
 
+import java.util.ArrayList;
+
 /**
  * Created by eve on 4/19/16.
  */
@@ -17,45 +19,24 @@ public class Board {
     static final int SECOND_PLAYER = 1;
     static final int THIRD_PLAYER = 2;
 
-    final int[][] fields = new int[8][]; //[y][x]
-
+    private final int[][] fields; //[y][x]
     private final int myPlayerNumber;
     private Move lastMove;
 
     public Board(int myPlayerNumber) {
         this.myPlayerNumber = myPlayerNumber;
-        initEmptyFields();
-        initPlayer(FIRST_PLAYER);
-        initPlayer(SECOND_PLAYER);
-        initPlayer(THIRD_PLAYER);
+        int[][] fields = createEmptyFields();
+        initPlayer(fields, FIRST_PLAYER);
+        initPlayer(fields, SECOND_PLAYER);
+        initPlayer(fields, THIRD_PLAYER);
 
+        this.fields = fields;
         L.d(myPlayerNumber, "Board initialized");
     }
 
-    private void initPlayer(int player) {
-        setField(new int[]{4, 7}, player);
-        setField(new int[]{5, 7}, player);
-        setField(new int[]{6, 7}, player);
-        setField(new int[]{7, 7}, player);
-        setField(new int[]{8, 7}, player);
-        setField(new int[]{9, 7}, player);
-        setField(new int[]{10, 7}, player);
-        setField(new int[]{6, 6}, player);
-    }
-
     void setField(int[] xAndY, int player) {
-        xAndY = getFieldCoordinates(xAndY, player);
+        xAndY = getTranslatedField(xAndY, player);
         fields[xAndY[1]][xAndY[0]] = player;
-    }
-
-    private int[] getFieldCoordinates(int[] xAndY, int player) {
-        if (player == SECOND_PLAYER) {
-            xAndY = translateFieldsCounterClockwise(xAndY);
-        }
-        if (player == SECOND_PLAYER || player == THIRD_PLAYER) {
-            xAndY = translateFieldsCounterClockwise(xAndY);
-        }
-        return xAndY;
     }
 
     public boolean makeMoveIfValid(Move move, int player) {
@@ -70,8 +51,8 @@ public class Board {
             return false;
         }
 
-//        int[] fromYAndXTranslated = getFieldCoordinates(move.fromY, move.fromX, player);
-//        int[] toYAndXTranslated = getFieldCoordinates(move.toY, move.toX, player);
+//        int[] fromYAndXTranslated = getTranslatedField(move.fromY, move.fromX, player);
+//        int[] toYAndXTranslated = getTranslatedField(move.toY, move.toX, player);
 //        // if x even, move left or right
 //        if (!(fromYAndXTranslated[1] % 2 == 0 && toYAndXTranslated[1] % 2 != 0 && fromYAndXTranslated[0] == toYAndXTranslated[0])) {
 //            return false;
@@ -88,6 +69,7 @@ public class Board {
         lastMove = move;
         return true;
     }
+
 
     static boolean isMoveValid(Move move, int player, int[][] board) {
         return false;
@@ -118,7 +100,18 @@ public class Board {
         return true;
     }
 
-    private void initEmptyFields() {
+    static int[] getTranslatedField(int[] xAndY, int player) {
+        if (player == SECOND_PLAYER) {
+            xAndY = translateFieldsCounterClockwise(xAndY);
+        }
+        if (player == SECOND_PLAYER || player == THIRD_PLAYER) {
+            xAndY = translateFieldsCounterClockwise(xAndY);
+        }
+        return xAndY;
+    }
+
+    static int[][] createEmptyFields() {
+        int[][] fields = new int[8][];
         for (int y = fields.length - 1; y >= 0; y--) {
             int rowLength = y * 2 + 1;
             fields[y] = new int[rowLength];
@@ -126,6 +119,24 @@ public class Board {
             for (int x = 0; x < rowLength; x++) {
                 fields[y][x] = EMPTY_FIELD;
             }
+        }
+        return fields;
+    }
+
+    static void initPlayer(int[][] fields, int player) {
+        ArrayList<int[]> initialFields = new ArrayList<>();
+        initialFields.add(new int[]{4, 7});
+        initialFields.add(new int[]{5, 7});
+        initialFields.add(new int[]{6, 7});
+        initialFields.add(new int[]{7, 7});
+        initialFields.add(new int[]{8, 7});
+        initialFields.add(new int[]{9, 7});
+        initialFields.add(new int[]{10, 7});
+        initialFields.add(new int[]{6, 6});
+
+        for (int[] initialField : initialFields) {
+            int[] xAndY = getTranslatedField(initialField, player);
+            fields[xAndY[1]][xAndY[0]] = player;
         }
     }
 
