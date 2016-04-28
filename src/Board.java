@@ -34,10 +34,10 @@ public class Board {
         L.d(myPlayerNumber, "Board initialized");
     }
 
-    void setField(int[] xAndY, int player) {
-        xAndY = getTranslatedField(xAndY, player);
-        fields[xAndY[1]][xAndY[0]] = player;
-    }
+//    void setField(int[] xAndY, int player) {
+//        xAndY = getTranslatedField(xAndY, player);
+//        fields[xAndY[1]][xAndY[0]] = player;
+//    }
 
     public boolean makeMoveIfValid(Move move, int player) {
 //        if(!isOnField(move.fromY, move.fromX)) {
@@ -71,8 +71,42 @@ public class Board {
     }
 
 
-    static boolean isMoveValid(Move move, int player, int[][] board) {
-        return false;
+    static boolean isMoveValid(Move move, int player, int[][] fields) {
+        if (move.fromY < 0 || move.fromY >= 8) {
+            return false;
+        }
+        if (move.fromX < 0 || move.fromX >= move.fromY * 2 + 1) {
+            return false;
+        }
+        if (move.toY < 0 || move.toY >= 8) {
+            return false;
+        }
+        if (move.toX < 0 || move.toX >= move.toY * 2 + 1) {
+            return false;
+        }
+
+
+        if (fields[move.fromY][move.fromX] != player) {
+            return false;
+        }
+
+        if (fields[move.toY][move.toX] == player) {
+            return false;
+        }
+
+        if (move.fromX % 2 == 0) {
+            // same y && x ether left or right
+            if (!(move.toY == move.fromY && (move.fromX + 1 == move.toX || move.fromX - 1 == move.toX))) {
+                return false;
+            }
+        } else {
+            // toY has to be one less && toX has to be one less
+            if (!(move.toY + 1 == move.fromY && move.toX + 1 == move.fromX)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     static int[] translateFieldsCounterClockwise(int[] xAndY) {
@@ -89,11 +123,11 @@ public class Board {
         return newXAndY;
     }
 
-    private static boolean isOnField(int[] newXAndY) {
-        if (newXAndY[1] < 0 || newXAndY[1] > 8) {
+    static boolean isOnField(int[] newXAndY) {
+        if (newXAndY[1] < 0 || newXAndY[1] >= 8) {
             return false;
         }
-        if (newXAndY[0] < 0 || newXAndY[0] > newXAndY[1] * 2 + 1) {
+        if (newXAndY[0] < 0 || newXAndY[0] >= newXAndY[1] * 2 + 1) {
             return false;
         }
 
@@ -117,7 +151,7 @@ public class Board {
             fields[y] = new int[rowLength];
 
             for (int x = 0; x < rowLength; x++) {
-                fields[y][x] = EMPTY_FIELD;
+                setPlayerOnField(EMPTY_FIELD, new int[]{x, y}, fields);
             }
         }
         return fields;
@@ -136,8 +170,16 @@ public class Board {
 
         for (int[] initialField : initialFields) {
             int[] xAndY = getTranslatedField(initialField, player);
-            fields[xAndY[1]][xAndY[0]] = player;
+            setPlayerOnField(player, xAndY, fields);
         }
+    }
+
+    static boolean setPlayerOnField(int player, int[] xAndY, int[][] fields) {
+        if (isOnField(xAndY)) {
+            fields[xAndY[1]][xAndY[0]] = player;
+            return true;
+        }
+        return false;
     }
 
     @Override

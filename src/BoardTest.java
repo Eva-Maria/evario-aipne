@@ -1,8 +1,10 @@
+import lenz.htw.aipne.Move;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 /**
@@ -53,9 +55,145 @@ public class BoardTest {
         Assert.assertEquals(expected, asString);
     }
 
+    @Test
+    public void testValidMovesForFirstPlayerWithEvenX() {
+        int[][] fields = Board.createEmptyFields();
+        Board.setPlayerOnField(Board.FIRST_PLAYER, new int[]{6, 6}, fields);
+
+        Move move = new Move(6, 6, 7, 6);
+        boolean isValid = Board.isMoveValid(move, Board.FIRST_PLAYER, fields);
+        Assert.assertTrue(isValid);
+
+        move = new Move(6, 6, 5, 6);
+        isValid = Board.isMoveValid(move, Board.FIRST_PLAYER, fields);
+        Assert.assertTrue(isValid);
+
+
+        move = new Move(4, 4, 5, 6);
+        isValid = Board.isMoveValid(move, Board.FIRST_PLAYER, fields);
+        Assert.assertFalse("Player is not present from field", isValid);
+
+        move = new Move(6, 6, 6, 6);
+        isValid = Board.isMoveValid(move, Board.FIRST_PLAYER, fields);
+        Assert.assertFalse("Player is already on this field & no move at all", isValid);
+
+        move = new Move(6, 6, 6, 7);
+        isValid = Board.isMoveValid(move, Board.FIRST_PLAYER, fields);
+        Assert.assertFalse("Player cannot move backwards from even x", isValid);
+
+        move = new Move(6, 6, 6, 5);
+        isValid = Board.isMoveValid(move, Board.FIRST_PLAYER, fields);
+        Assert.assertFalse("Player cannot move straight ahead from even x", isValid);
+
+        move = new Move(6, 6, 4, 6);
+        isValid = Board.isMoveValid(move, Board.FIRST_PLAYER, fields);
+        Assert.assertFalse("Player cannot move more steps as one", isValid);
+    }
 
     @Test
-    public void testValidMoves() {
-        Board board = new Board(Board.FIRST_PLAYER);
+    public void testValidMovesForFirstPlayerWithOddX() {
+        int[][] fields = Board.createEmptyFields();
+        Board.setPlayerOnField(Board.FIRST_PLAYER, new int[]{5, 5}, fields);
+
+        Move move = new Move(5, 5, 4, 4);
+        boolean isValid = Board.isMoveValid(move, Board.FIRST_PLAYER, fields);
+        Assert.assertTrue(isValid);
+
+
+        move = new Move(4, 4, 5, 6);
+        isValid = Board.isMoveValid(move, Board.FIRST_PLAYER, fields);
+        Assert.assertFalse("Player is not present from field", isValid);
+
+        move = new Move(5, 5, 5, 5);
+        isValid = Board.isMoveValid(move, Board.FIRST_PLAYER, fields);
+        Assert.assertFalse("Player is already on this field & no move at all", isValid);
+
+        move = new Move(5, 5, 4, 5);
+        isValid = Board.isMoveValid(move, Board.FIRST_PLAYER, fields);
+        Assert.assertFalse("Player cannot move to side from odd x", isValid);
+
+        move = new Move(5, 5, 6, 6);
+        isValid = Board.isMoveValid(move, Board.FIRST_PLAYER, fields);
+        Assert.assertFalse("Player can not move backwards", isValid);
+
+        move = new Move(5, 5, 3, 3);
+        isValid = Board.isMoveValid(move, Board.FIRST_PLAYER, fields);
+        Assert.assertFalse("Player can not move more steps as one", isValid);
+    }
+
+    @Test
+    public void testValidMovesForFirstPlayerAtFieldLimits() {
+        int[][] fields = Board.createEmptyFields();
+        Board.setPlayerOnField(Board.FIRST_PLAYER, new int[]{0, 0}, fields);
+
+        Move move = new Move(0, 0, -1, -1);
+        boolean isValid = Board.isMoveValid(move, Board.FIRST_PLAYER, fields);
+        Assert.assertFalse("Cannot leave board", isValid);
+
+
+        fields = Board.createEmptyFields();
+        Board.setPlayerOnField(Board.FIRST_PLAYER, new int[]{0, 7}, fields);
+
+        move = new Move(0, 7, -1, 6);
+        isValid = Board.isMoveValid(move, Board.FIRST_PLAYER, fields);
+        Assert.assertFalse("Cannot leave board", isValid);
+
+
+        fields = Board.createEmptyFields();
+        Board.setPlayerOnField(Board.FIRST_PLAYER, new int[]{14, 7}, fields);
+
+        move = new Move(14, 7, 15, 7);
+        isValid = Board.isMoveValid(move, Board.FIRST_PLAYER, fields);
+        Assert.assertFalse("Cannot leave board", isValid);
+
+        move = new Move(14, 7, 13, 7);
+        isValid = Board.isMoveValid(move, Board.FIRST_PLAYER, fields);
+        Assert.assertTrue(isValid);
+    }
+
+    @Test
+    public void testAllValidMovesForFirstPlayer() {
+        int[][] fields = Board.createEmptyFields();
+        int totalValidMoves = 0;
+
+        for (int fromY = fields.length - 1; fromY >= 0; fromY--) {
+            int rowLength = fromY * 2 + 1;
+            for (int fromX = 0; fromX < rowLength; fromX++) {
+                int validMovesCount = subTestValidMove(fields, fromX, fromY);
+                totalValidMoves += validMovesCount;
+//                System.out.println(fromX + ", " + fromY + " => " + validMovesCount);
+
+                if (fromX == 0 && fromY == 0) {
+                    Assert.assertEquals(0, validMovesCount);
+                } else if (fromX == 0) {
+                    Assert.assertEquals(1, validMovesCount);
+                } else if (fromX == rowLength - 1) {
+                    Assert.assertEquals(1, validMovesCount);
+                } else if (fromX % 2 == 0) {
+                    Assert.assertEquals(2, validMovesCount);
+                } else {
+                    Assert.assertEquals(1, validMovesCount);
+                }
+            }
+        }
+        System.out.println("Total valid moves counted: " + totalValidMoves);
+    }
+
+    private int subTestValidMove(int[][] fields, int fromX, int fromY) {
+        ArrayList<Boolean> validFields = new ArrayList<>();
+        for (int toY = -5; toY < 20; toY++) {
+
+            for (int toX = -5; toX < 20; toX++) {
+                Board.setPlayerOnField(Board.FIRST_PLAYER, new int[]{fromX, fromY}, fields);
+
+                Move move = new Move(fromX, fromY, toX, toY);
+                boolean isValid = Board.isMoveValid(move, Board.FIRST_PLAYER, fields);
+                if (isValid) {
+                    validFields.add(isValid);
+                }
+                Board.setPlayerOnField(Board.EMPTY_FIELD, new int[]{fromX, fromY}, fields);
+            }
+        }
+        return validFields.size();
     }
 }
