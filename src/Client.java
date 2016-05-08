@@ -47,6 +47,8 @@ public class Client implements Runnable {
         } catch (Exception e) {
             if (e.getMessage().startsWith(INVALID_MOVE_EXCEPTION)) {
                 L.d(myPlayerNumber, "kicked out.");
+            } else if (e.getMessage().startsWith(BoardManager.EXCPETION_NO_PLAYER_FOUND)) {
+                L.d(myPlayerNumber, "no player found");
             } else {
                 throw e;
             }
@@ -68,7 +70,7 @@ public class Client implements Runnable {
             if (move == null) {
                 move = Algorithm.getNextMove(bm);
                 networkClient.sendMove(move);
-                move = networkClient.receiveMove();
+                continue;
             }
 
             bm.updateBoard(move);

@@ -5,16 +5,12 @@ import lenz.htw.aipne.Move;
  */
 public class BoardManager {
 
-    public static final String EXCPETION_NO_PLAYER_LEFT = "No player left";
+    public static final String EXCPETION_NO_PLAYER_FOUND = "No player found";
     Board[] boards;
-    int currentPlayer;
     int myPlayerNumber;
-    boolean[] isStillPlaying = {true, true, true};
 
     public BoardManager(int myPlayerNumber) {
         this.myPlayerNumber = myPlayerNumber;
-        currentPlayer = Board.FIRST_PLAYER;
-
         boards = new Board[3];
 
         boards[Board.FIRST_PLAYER] = new Board();
@@ -27,45 +23,30 @@ public class BoardManager {
         Board.initialTranslateBoardForPlayer(boards[Board.THIRD_PLAYER], Board.THIRD_PLAYER);
     }
 
-    public void updateBoard(Move move) {
-
-        updateAllBoards(move);
-
-        int playersLeft = 3;
-        do {
-            currentPlayer = ++currentPlayer % 3;
-            playersLeft--;
-            if (playersLeft < 0) {
-                throw new IllegalStateException(EXCPETION_NO_PLAYER_LEFT);
-            }
-        } while (!isStillPlaying[currentPlayer]);
-
-        System.out.println("player is now: " + currentPlayer);
+    public int updateBoard(Move move) {
+        int currentPlayer = getMasterBoard().determinePlayer(move);
+        if (currentPlayer == Board.EMPTY_FIELD) {
+            throw new IllegalStateException(EXCPETION_NO_PLAYER_FOUND);
+        }
+        updateAllBoards(move, currentPlayer);
+        return currentPlayer;
     }
 
-    private void updateAllBoards(Move move) {
-        int tempCurrentPlayer = currentPlayer;
+    private void updateAllBoards(Move move, int currentPlayer) {
+        int player = currentPlayer;
         int playersLeft = 3;
 
         while (playersLeft > 0) {
             playersLeft--;
-            if (!isStillPlaying[tempCurrentPlayer]) {
-                tempCurrentPlayer = ++tempCurrentPlayer % 3;
-                continue;
-            }
 
-            Move translatedMove = Board.translateMoveForPlayerReverse(move, tempCurrentPlayer);
-            if (currentPlayer == tempCurrentPlayer) {
-                boolean isValid = boards[currentPlayer].makeMoveIfValid(translatedMove, currentPlayer);
-                isStillPlaying[currentPlayer] = isValid;
-                // TODO: if !isValid -> boards[tempCurrentPlayer] = null;
+            Move translatedMove = Board.translateMoveForPlayerReverse(move, player);
+            if (currentPlayer == player) {
+                boards[currentPlayer].makeMoveIfValid(translatedMove, currentPlayer);
             } else {
-                if (isStillPlaying[currentPlayer]) {
-                    boards[tempCurrentPlayer].makeMove(translatedMove, currentPlayer);
-                }
+                boards[player].makeMove(translatedMove, currentPlayer);
             }
 
-            tempCurrentPlayer = ++tempCurrentPlayer % 3;
+            player = ++player % 3;
         }
     }
 

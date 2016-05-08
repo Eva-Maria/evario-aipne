@@ -53,6 +53,10 @@ public class Board {
         lastMove = move;
     }
 
+    public int determinePlayer(Move move) {
+        return fields[move.fromY][move.fromX];
+    }
+
     public int[][] getFields() {
         // Only for tests
         return fields;
