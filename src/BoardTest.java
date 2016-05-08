@@ -165,9 +165,9 @@ public class BoardTest {
 
                 if (fromX == 0 && fromY == 0) {
                     Assert.assertEquals(0, validMovesCount);
-                } else if (fromX == 0) {
+                } else if (fromX == 0) { // left edge
                     Assert.assertEquals(1, validMovesCount);
-                } else if (fromX == rowLength - 1) {
+                } else if (fromX == rowLength - 1) { // right edge
                     Assert.assertEquals(1, validMovesCount);
                 } else if (fromX % 2 == 0) {
                     Assert.assertEquals(2, validMovesCount);
