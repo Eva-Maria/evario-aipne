@@ -5,6 +5,7 @@ import lenz.htw.aipne.Move;
  */
 public class BoardManager {
 
+    public static final String EXCPETION_NO_PLAYER_LEFT = "No player left";
     Board[] boards;
     int currentPlayer;
     int myPlayerNumber;
@@ -34,8 +35,10 @@ public class BoardManager {
         do {
             currentPlayer = ++currentPlayer % 3;
             playersLeft--;
-        } while (!isStillPlaying[currentPlayer] && playersLeft >= 0);
-
+            if (playersLeft < 0) {
+                throw new IllegalStateException(EXCPETION_NO_PLAYER_LEFT);
+            }
+        } while (!isStillPlaying[currentPlayer]);
 
         System.out.println("player is now: " + currentPlayer);
     }
