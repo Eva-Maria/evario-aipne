@@ -119,6 +119,11 @@ public class BoardTest {
         move = new Move(5, 5, 3, 3);
         isValid = Board.isMoveValid(move, Board.FIRST_PLAYER, fields);
         Assert.assertFalse("Player can not move more steps as one", isValid);
+
+        Board.setPlayerOnField(Board.SECOND_PLAYER, new int[]{4, 4}, fields);
+        move = new Move(5, 5, 4, 4);
+        isValid = Board.isMoveValid(move, Board.FIRST_PLAYER, fields);
+        Assert.assertFalse("Player can not beat other players on odd fields", isValid);
     }
 
     @Test

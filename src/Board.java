@@ -91,6 +91,9 @@ public class Board {
             if (!(move.toY + 1 == move.fromY && move.toX + 1 == move.fromX)) {
                 return false;
             }
+            if (fields[move.toY][move.toX] != EMPTY_FIELD) {
+                return false;
+            }
         }
 
         return true;

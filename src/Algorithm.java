@@ -8,8 +8,11 @@ public class Algorithm {
         Board myBoard = bm.getMyBoard();
 
         Move move = findMove(myBoard.getFields(), bm.myPlayerNumber);
-        move = Board.translateMoveForPlayer(move, bm.myPlayerNumber);
+        if (move == null) {
+            return new Move(0, 0, 0, 0);
+        }
 
+        move = Board.translateMoveForPlayer(move, bm.myPlayerNumber);
         return move;
     }
 

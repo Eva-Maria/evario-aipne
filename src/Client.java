@@ -44,7 +44,7 @@ public class Client implements Runnable {
 
         try {
             interact(networkClient, bm);
-        } catch (RuntimeException e) {
+        } catch (Exception e) {
             if (e.getMessage().startsWith(INVALID_MOVE_EXCEPTION)) {
                 L.d(myPlayerNumber, "kicked out.");
             } else {
