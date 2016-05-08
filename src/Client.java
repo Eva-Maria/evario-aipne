@@ -1,4 +1,5 @@
 import lenz.htw.aipne.Move;
+import lenz.htw.aipne.net.NetworkClient;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -19,8 +20,6 @@ public class Client implements Runnable {
     private String name;
     private String hostName;
 
-    private Brain brain = new Brain();
-
     public Client() {
         //only for testing
         name = "Test";
@@ -39,12 +38,12 @@ public class Client implements Runnable {
 
     @Override
     public void run() {
-        NetworkClientWrapper networkClient = getNetworkClient();
+        NetworkClient networkClient = getNetworkClient();
         int myPlayerNumber = networkClient.getMyPlayerNumber();
-        Board board = new Board();
+        BoardManager bm = new BoardManager(myPlayerNumber);
 
         try {
-            interact(networkClient, board);
+            interact(networkClient, bm);
         } catch (RuntimeException e) {
             if (e.getMessage().startsWith(INVALID_MOVE_EXCEPTION)) {
                 L.d(myPlayerNumber, "kicked out.");
@@ -54,44 +53,25 @@ public class Client implements Runnable {
         }
     }
 
-    NetworkClientWrapper getNetworkClient() {
+    NetworkClient getNetworkClient() {
         try {
-            return new NetworkClientWrapper(hostName, name, logo);
+            return new NetworkClient(hostName, name, logo);
         } catch (Exception e) {
             throw new RuntimeException("Server seems not to be running.");
         }
     }
 
-    private void interact(NetworkClientWrapper networkClient, Board board) throws RuntimeException {
-        int currentPlayer = Board.FIRST_PLAYER;
-        int myPlayerNumber = networkClient.getMyPlayerNumber();
-
-        boolean[] isStillPlaying = {true, true, true};
-
+    private void interact(NetworkClient networkClient, BoardManager bm) throws RuntimeException {
         while (true) {
-            if (!isStillPlaying[currentPlayer]) {
-                currentPlayer = ++currentPlayer % 3;
-                continue;
-            }
-
-            Move move = networkClient.receiveMove(0);
+            Move move = networkClient.receiveMove();
 
             if (move == null) {
-                move = brain.generateMyMove(myPlayerNumber);
-                networkClient.sendMove(move, 0);
-                move = networkClient.receiveMove(0);
-                currentPlayer = myPlayerNumber;
+                move = Algorithm.getNextMove(bm);
+                networkClient.sendMove(move);
+                move = networkClient.receiveMove();
             }
 
-            L.d(myPlayerNumber, "currentPlayer " + currentPlayer + " with move " + move);
-
-            boolean isValidMove = board.makeMoveIfValid(move, currentPlayer);
-
-            if (!isValidMove) {
-                isStillPlaying[currentPlayer] = false;
-            }
-
-            currentPlayer = ++currentPlayer % 3;
+            bm.updateBoard(move);
         }
     }
 

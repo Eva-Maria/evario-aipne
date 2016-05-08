@@ -72,4 +72,8 @@ public class BoardManager {
     Board getMasterBoard() {
         return boards[Board.FIRST_PLAYER];
     }
+
+    Board getMyBoard() {
+        return boards[myPlayerNumber];
+    }
 }

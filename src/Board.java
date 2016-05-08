@@ -127,6 +127,12 @@ public class Board {
         return new Move(fromXAndY[0], fromXAndY[1], toXAndY[0], toXAndY[1]);
     }
 
+    static Move translateMoveForPlayer(Move move, int player) {
+        int[] fromXAndY = initialTranslateFieldCoordinatesForPlayer(new int[]{move.fromX, move.fromY}, player);
+        int[] toXAndY = initialTranslateFieldCoordinatesForPlayer(new int[]{move.toX, move.toY}, player);
+        return new Move(fromXAndY[0], fromXAndY[1], toXAndY[0], toXAndY[1]);
+    }
+
     static int[] reverseTranslateFieldCoordinatesForPlayer(int[] xAndY, int player) {
         if (player == THIRD_PLAYER) {
             xAndY = translateFieldsCounterClockwise(xAndY);
