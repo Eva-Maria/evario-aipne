@@ -38,34 +38,19 @@ public class Board {
 //    }
 
     public boolean makeMoveIfValid(Move move, int player) {
-//        if(!isOnField(move.fromY, move.fromX)) {
-//            return false;
-//        }
-//        if(!isOnField(move.toY, move.toX)) {
-//            return false;
-//        }
-
-        if (fields[move.fromY][move.fromX] != player) {
+        if (!isMoveValid(move, player, fields)) {
             return false;
         }
 
-//        int[] fromYAndXTranslated = initialTranslateFieldCoordinatesForPlayer(move.fromY, move.fromX, player);
-//        int[] toYAndXTranslated = initialTranslateFieldCoordinatesForPlayer(move.toY, move.toX, player);
-//        // if x even, move left or right
-//        if (!(fromYAndXTranslated[1] % 2 == 0 && toYAndXTranslated[1] % 2 != 0 && fromYAndXTranslated[0] == toYAndXTranslated[0])) {
-//            return false;
-//        }
-//
-//        if (!(fromYAndXTranslated[1] % 2 != 0 && toYAndXTranslated[1] % 2 == 0 && fromYAndXTranslated[0] == toYAndXTranslated[0] - 1)) {
-//            return false;
-//        }
+        makeMove(move, player);
+        return true;
+    }
 
-        //TODO: check for move distance
+    public void makeMove(Move move, int player) {
         fields[move.fromY][move.fromX] = EMPTY_FIELD;
         fields[move.toY][move.toX] = player;
 
         lastMove = move;
-        return true;
     }
 
     public int[][] getFields() {
@@ -115,7 +100,7 @@ public class Board {
         int newX = 2 * xAndY[1] - xAndY[0];
         int newY = (int) Math.ceil((14 - xAndY[0]) / 2f);
 
-        System.out.println(xAndY[0] + "," + xAndY[1] + " -> " + newY + "," + newX);
+//        System.out.println(xAndY[0] + "," + xAndY[1] + " -> " + newY + "," + newX);
 
         int[] newXAndY = {newX, newY};
         if (!isOnField(newXAndY)) {
@@ -134,6 +119,22 @@ public class Board {
         }
 
         return true;
+    }
+
+    static Move translateMoveForPlayerReverse(Move move, int player) {
+        int[] fromXAndY = reverseTranslateFieldCoordinatesForPlayer(new int[]{move.fromX, move.fromY}, player);
+        int[] toXAndY = reverseTranslateFieldCoordinatesForPlayer(new int[]{move.toX, move.toY}, player);
+        return new Move(fromXAndY[0], fromXAndY[1], toXAndY[0], toXAndY[1]);
+    }
+
+    static int[] reverseTranslateFieldCoordinatesForPlayer(int[] xAndY, int player) {
+        if (player == THIRD_PLAYER) {
+            xAndY = translateFieldsCounterClockwise(xAndY);
+        }
+        if (player == SECOND_PLAYER || player == THIRD_PLAYER) {
+            xAndY = translateFieldsCounterClockwise(xAndY);
+        }
+        return xAndY;
     }
 
     static int[] initialTranslateFieldCoordinatesForPlayer(int[] xAndY, int player) {

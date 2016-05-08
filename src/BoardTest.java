@@ -198,6 +198,25 @@ public class BoardTest {
     }
 
     @Test
+    public void testTranslateMoveForPlayer() {
+        Move move = new Move(2, 4, 3, 5);
+        Move actualMove = Board.translateMoveForPlayerReverse(move, Board.SECOND_PLAYER);
+        Move expectedMove = new Move(6, 6, 7, 6);
+        Assert.assertEquals(expectedMove.toString(), actualMove.toString());
+
+        move = new Move(6, 4, 5, 4);
+        actualMove = Board.translateMoveForPlayerReverse(move, Board.THIRD_PLAYER);
+        expectedMove = new Move(6, 6, 7, 6);
+        Assert.assertEquals(expectedMove.toString(), actualMove.toString());
+
+        move = new Move(0, 2, 1, 2);
+        actualMove = Board.translateMoveForPlayerReverse(move, Board.SECOND_PLAYER);
+        expectedMove = new Move(4, 7, 3, 7);
+        Assert.assertEquals(expectedMove.toString(), actualMove.toString());
+
+    }
+
+    @Test
     public void testTranslateBoardForPlayers() {
         Board board = new Board();
 
