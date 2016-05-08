@@ -27,6 +27,20 @@ public class BoardManager {
     }
 
     public void updateBoard(Move move) {
+
+        updateAllBoards(move);
+
+        int playersLeft = 3;
+        do {
+            currentPlayer = ++currentPlayer % 3;
+            playersLeft--;
+        } while (!isStillPlaying[currentPlayer] && playersLeft >= 0);
+
+
+        System.out.println("player is now: " + currentPlayer);
+    }
+
+    private void updateAllBoards(Move move) {
         int tempCurrentPlayer = currentPlayer;
         int playersLeft = 3;
 
@@ -39,8 +53,8 @@ public class BoardManager {
 
             Move translatedMove = Board.translateMoveForPlayerReverse(move, tempCurrentPlayer);
             if (currentPlayer == tempCurrentPlayer) {
-                boolean isValid = boards[tempCurrentPlayer].makeMoveIfValid(translatedMove, currentPlayer);
-                isStillPlaying[tempCurrentPlayer] = isValid;
+                boolean isValid = boards[currentPlayer].makeMoveIfValid(translatedMove, currentPlayer);
+                isStillPlaying[currentPlayer] = isValid;
                 // TODO: if !isValid -> boards[tempCurrentPlayer] = null;
             } else {
                 if (isStillPlaying[currentPlayer]) {
@@ -50,9 +64,6 @@ public class BoardManager {
 
             tempCurrentPlayer = ++tempCurrentPlayer % 3;
         }
-
-        currentPlayer = ++currentPlayer % 3;
-        System.out.println("player is now: " + currentPlayer);
     }
 
     Board getMasterBoard() {
