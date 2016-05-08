@@ -116,7 +116,7 @@ public class BoardManagerTest {
             bm.updateBoard(move);
             fail();
         } catch (IllegalStateException e) {
-            assertEquals(BoardManager.EXCPETION_NO_PLAYER_FOUND, e.getMessage());
+            assertEquals(BoardManager.EXCEPTION_NO_PLAYER, e.getMessage());
         }
 
         System.out.println(bm.getMasterBoard());

@@ -47,7 +47,7 @@ public class Client implements Runnable {
         } catch (Exception e) {
             if (e.getMessage().startsWith(INVALID_MOVE_EXCEPTION)) {
                 L.d(myPlayerNumber, "kicked out.");
-            } else if (e.getMessage().startsWith(BoardManager.EXCPETION_NO_PLAYER_FOUND)) {
+            } else if (e.getMessage().startsWith(BoardManager.EXCEPTION_NO_PLAYER)) {
                 L.d(myPlayerNumber, "no player found");
             } else {
                 throw e;

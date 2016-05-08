@@ -5,7 +5,7 @@ import lenz.htw.aipne.Move;
  */
 public class BoardManager {
 
-    public static final String EXCPETION_NO_PLAYER_FOUND = "No player found";
+    public static final String EXCEPTION_NO_PLAYER = "No player found";
     Board[] boards;
     int myPlayerNumber;
 
@@ -26,7 +26,7 @@ public class BoardManager {
     public int updateBoard(Move move) {
         int currentPlayer = getMasterBoard().determinePlayer(move);
         if (currentPlayer == Board.EMPTY_FIELD) {
-            throw new IllegalStateException(EXCPETION_NO_PLAYER_FOUND);
+            throw new IllegalStateException(EXCEPTION_NO_PLAYER);
         }
         updateAllBoards(move, currentPlayer);
         return currentPlayer;
@@ -36,15 +36,12 @@ public class BoardManager {
         int player = currentPlayer;
         int playersLeft = 3;
 
+        //TODO: throw away kicked users board?
         while (playersLeft > 0) {
             playersLeft--;
 
             Move translatedMove = Board.translateMoveForPlayerReverse(move, player);
-            if (currentPlayer == player) {
-                boards[currentPlayer].makeMoveIfValid(translatedMove, currentPlayer);
-            } else {
-                boards[player].makeMove(translatedMove, currentPlayer);
-            }
+            boards[player].makeMove(translatedMove, currentPlayer);
 
             player = ++player % 3;
         }
