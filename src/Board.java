@@ -1,13 +1,14 @@
 import lenz.htw.aipne.Move;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * Created by eve on 4/19/16.
  */
 public class Board {
 
-    static final String PRINT_ORIGIN = "  ";
+    static final String PRINT_ORIGIN = "   ";
     static final String PRINT_ROW_DELIMITER = ": ";
     static final String PRINT_SPACE = " ";
     static final String PRINT_FIELD_FORMAT = "%02d";
@@ -20,22 +21,19 @@ public class Board {
     static final int THIRD_PLAYER = 2;
 
     private final int[][] fields; //[y][x]
-    private final int myPlayerNumber;
     private Move lastMove;
 
-    public Board(int myPlayerNumber) {
-        this.myPlayerNumber = myPlayerNumber;
+    public Board() {
         int[][] fields = createEmptyFields();
         initPlayer(fields, FIRST_PLAYER);
         initPlayer(fields, SECOND_PLAYER);
         initPlayer(fields, THIRD_PLAYER);
 
         this.fields = fields;
-        L.d(myPlayerNumber, "Board initialized");
     }
 
 //    void setField(int[] xAndY, int player) {
-//        xAndY = getTranslatedField(xAndY, player);
+//        xAndY = initialTranslateFieldCoordinatesForPlayer(xAndY, player);
 //        fields[xAndY[1]][xAndY[0]] = player;
 //    }
 
@@ -51,8 +49,8 @@ public class Board {
             return false;
         }
 
-//        int[] fromYAndXTranslated = getTranslatedField(move.fromY, move.fromX, player);
-//        int[] toYAndXTranslated = getTranslatedField(move.toY, move.toX, player);
+//        int[] fromYAndXTranslated = initialTranslateFieldCoordinatesForPlayer(move.fromY, move.fromX, player);
+//        int[] toYAndXTranslated = initialTranslateFieldCoordinatesForPlayer(move.toY, move.toX, player);
 //        // if x even, move left or right
 //        if (!(fromYAndXTranslated[1] % 2 == 0 && toYAndXTranslated[1] % 2 != 0 && fromYAndXTranslated[0] == toYAndXTranslated[0])) {
 //            return false;
@@ -70,6 +68,10 @@ public class Board {
         return true;
     }
 
+    public int[][] getFields() {
+        // Only for tests
+        return fields;
+    }
 
     static boolean isMoveValid(Move move, int player, int[][] fields) {
         if (move.fromY < 0 || move.fromY >= 8) {
@@ -134,7 +136,7 @@ public class Board {
         return true;
     }
 
-    static int[] getTranslatedField(int[] xAndY, int player) {
+    static int[] initialTranslateFieldCoordinatesForPlayer(int[] xAndY, int player) {
         if (player == SECOND_PLAYER) {
             xAndY = translateFieldsCounterClockwise(xAndY);
         }
@@ -142,6 +144,33 @@ public class Board {
             xAndY = translateFieldsCounterClockwise(xAndY);
         }
         return xAndY;
+    }
+
+    static void initialTranslateBoardForPlayer(Board board, int player) {
+        Board cloned = Board.clone(board);
+        for (int y = 7; y >= 0; y--) {
+            int rowLength = y * 2 + 1;
+
+            for (int x = 0; x < rowLength; x++) {
+                int[] xAndY = new int[]{x, y};
+                xAndY = initialTranslateFieldCoordinatesForPlayer(xAndY, player);
+                board.fields[y][x] = cloned.fields[xAndY[1]][xAndY[0]];
+            }
+        }
+    }
+
+    static Board clone(Board board) {
+        Board cloned = new Board();
+
+        for (int y = 0; y < board.fields.length; y++) {
+            cloned.fields[y] = Arrays.copyOf(board.fields[y], board.fields[y].length);
+        }
+
+        if (board.lastMove != null) {
+            cloned.lastMove = new Move(board.lastMove.fromX, board.lastMove.fromY, board.lastMove.toX, board.lastMove.toY);
+        }
+
+        return cloned;
     }
 
     static int[][] createEmptyFields() {
@@ -169,7 +198,7 @@ public class Board {
         initialFields.add(new int[]{6, 6});
 
         for (int[] initialField : initialFields) {
-            int[] xAndY = getTranslatedField(initialField, player);
+            int[] xAndY = initialTranslateFieldCoordinatesForPlayer(initialField, player);
             setPlayerOnField(player, xAndY, fields);
         }
     }
@@ -185,7 +214,7 @@ public class Board {
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        StringBuilder header = new StringBuilder(myPlayerNumber + PRINT_ORIGIN);
+        StringBuilder header = new StringBuilder(PRINT_ORIGIN);
 
         final int yMaxLength = fields.length - 1;
         for (int y = yMaxLength; y >= 0; y--) {

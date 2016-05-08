@@ -41,9 +41,9 @@ public class BoardTest {
 
     @Test
     public void testInitAndToString() {
-        Board board = new Board(Board.FIRST_PLAYER);
+        Board board = new Board();
         String asString = board.toString();
-        String expected = "0  00 01 02 03 04 05 06 07 08 09 10 11 12 13 14 \n" +
+        String expected = "   00 01 02 03 04 05 06 07 08 09 10 11 12 13 14 \n" +
                 "7: -1 -1 -1 -1 00 00 00 00 00 00 00 -1 -1 -1 -1 \n" +
                 "6: -1 -1 -1 -1 -1 -1 00 -1 -1 -1 -1 -1 -1 \n" +
                 "5: 01 01 -1 -1 -1 -1 -1 -1 -1 02 02 \n" +
@@ -195,5 +195,34 @@ public class BoardTest {
             }
         }
         return validFields.size();
+    }
+
+    @Test
+    public void testTranslateBoardForPlayers() {
+        Board board = new Board();
+
+        Board.initialTranslateBoardForPlayer(board, Board.FIRST_PLAYER);
+        Assert.assertEquals(board.getFields()[6][6], Board.FIRST_PLAYER);
+
+        board = new Board();
+        Board.initialTranslateBoardForPlayer(board, Board.SECOND_PLAYER);
+        Assert.assertEquals(board.getFields()[6][6], Board.SECOND_PLAYER);
+
+        board = new Board();
+        Board.initialTranslateBoardForPlayer(board, Board.THIRD_PLAYER);
+        System.out.println(board);
+        Assert.assertEquals(board.getFields()[6][6], Board.THIRD_PLAYER);
+    }
+
+    @Test
+    public void testCloneBoards() {
+        Board board = new Board();
+        Board cloned = Board.clone(board);
+
+        Assert.assertNotEquals(board, cloned);
+
+        board.getFields()[0][0] = Board.THIRD_PLAYER;
+
+        Assert.assertFalse(Arrays.deepEquals(board.getFields(), cloned.getFields()));
     }
 }

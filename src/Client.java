@@ -41,7 +41,7 @@ public class Client implements Runnable {
     public void run() {
         NetworkClientWrapper networkClient = getNetworkClient();
         int myPlayerNumber = networkClient.getMyPlayerNumber();
-        Board board = new Board(myPlayerNumber);
+        Board board = new Board();
 
         try {
             interact(networkClient, board);
