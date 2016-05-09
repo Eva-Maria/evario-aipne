@@ -41,10 +41,23 @@ public class Client implements Runnable {
         NetworkClient networkClient = getNetworkClient();
         int myPlayerNumber = networkClient.getMyPlayerNumber();
         BoardManager bm = new BoardManager(myPlayerNumber);
+        Algorithm algorithm;
+        if (myPlayerNumber == 0) {
+            algorithm = new AlphaBetaAlgorithm(bm, 6, 8, 3, 4);
+
+        } else if (myPlayerNumber == 1) {
+            algorithm = new AlphaBetaAlgorithm(bm, 4, 2, 2, 1);
+
+        } else {
+            algorithm = new AlphaBetaAlgorithm(bm, 2, 0, 1, 1);
+        }
 
         try {
-            interact(networkClient, bm);
+            interact(networkClient, bm, algorithm);
         } catch (Exception e) {
+            if (e.getMessage() == null) {
+                throw e;
+            }
             if (e.getMessage().startsWith(INVALID_MOVE_EXCEPTION)) {
                 L.d(myPlayerNumber, "kicked out.");
             } else if (e.getMessage().startsWith(BoardManager.EXCEPTION_NO_PLAYER)) {
@@ -63,12 +76,12 @@ public class Client implements Runnable {
         }
     }
 
-    private void interact(NetworkClient networkClient, BoardManager bm) throws RuntimeException {
+    private void interact(NetworkClient networkClient, BoardManager bm, Algorithm algorithm) throws RuntimeException {
         while (true) {
             Move move = networkClient.receiveMove();
 
             if (move == null) {
-                move = Algorithm.getNextMove(bm);
+                move = algorithm.getNextMove();
                 networkClient.sendMove(move);
                 continue;
             }

@@ -23,6 +23,11 @@ public class BoardManager {
         Board.initialTranslateBoardForPlayer(boards[Board.THIRD_PLAYER], Board.THIRD_PLAYER);
     }
 
+    public BoardManager(int myPlayerNumber, Board[] boards) {
+        this.myPlayerNumber = myPlayerNumber;
+        this.boards = boards;
+    }
+
     public int updateBoard(Move move) {
         int currentPlayer = getMasterBoard().determinePlayer(move);
         if (currentPlayer == Board.EMPTY_FIELD) {
@@ -53,5 +58,18 @@ public class BoardManager {
 
     Board getMyBoard() {
         return boards[myPlayerNumber];
+    }
+
+    Board[] getAllBoards() {
+        return boards;
+    }
+
+    public static BoardManager clone(BoardManager bm) {
+        Board[] clonedBoards = new Board[bm.boards.length];
+        for (int i = 0; i < bm.boards.length; i++) {
+            clonedBoards[i] = Board.clone(bm.boards[i]);
+        }
+        BoardManager clone = new BoardManager(bm.myPlayerNumber, clonedBoards);
+        return clone;
     }
 }

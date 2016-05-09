@@ -254,4 +254,21 @@ public class Board {
         }
         return header.toString() + PRINT_NEW_LINE + builder.toString();
     }
+
+    public int rate(int player, int stoneWeight, int distanceWeight) {
+        int myStones = 0;
+        int distanceStart = 0;
+        for (int y = fields.length - 1; y >= 0; y--) {
+            int rowLength = y * 2 + 1;
+
+            for (int x = 0; x < rowLength; x++) {
+                if (fields[y][x] == player) {
+                    myStones += stoneWeight;
+                    distanceStart += distanceWeight * (fields.length - y);
+                }
+            }
+        }
+
+        return myStones + distanceStart;
+    }
 }

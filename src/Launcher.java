@@ -9,7 +9,7 @@ public class Launcher {
 
     static final Runnable serverLauncher = () -> {
         try {
-            String[] serverArgs = {"800", "600", "5", "noanim"};
+            String[] serverArgs = {"800", "600", "5"};
             Server.main(serverArgs);
         } catch (Exception e) {
             System.out.println("Server is already running. Do nothing.");
