@@ -20,6 +20,10 @@ public class Board {
     static final int SECOND_PLAYER = 1;
     static final int THIRD_PLAYER = 2;
 
+    static int firstPlayerStones = 8;
+    static int secondPlayerStones = 8;
+    static int thirdPlayerStones = 8;
+
     private final int[][] fields; //[y][x]
     private Move lastMove;
 
@@ -53,13 +57,34 @@ public class Board {
         lastMove = move;
     }
 
-    public int determinePlayer(Move move) {
+    public int determinePlayerFrom(Move move) {
         return fields[move.fromY][move.fromX];
+    }
+
+    public int determinePlayerTo(Move move) {
+        return fields[move.toY][move.toX];
+    }
+
+    public boolean isPlayerOnField(int x, int y, int player) {
+        return fields[y][x] == player;
     }
 
     public int[][] getFields() {
         // Only for tests
         return fields;
+    }
+
+    public static int getPlayerStonesCount(int player) {
+        switch (player) {
+            case Board.FIRST_PLAYER:
+                return Board.firstPlayerStones--;
+            case Board.SECOND_PLAYER:
+                return Board.secondPlayerStones--;
+            case Board.THIRD_PLAYER:
+                return Board.thirdPlayerStones--;
+            default:
+                return 0;
+        }
     }
 
     static boolean isMoveValid(Move move, int player, int[][] fields) {

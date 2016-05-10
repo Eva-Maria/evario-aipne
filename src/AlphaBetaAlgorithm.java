@@ -8,9 +8,8 @@ import java.util.ArrayList;
 public class AlphaBetaAlgorithm implements Algorithm {
 
     private BoardManager bm;
-    static int depth = 2;
+    static int depth = 5;
     Move bestMove;
-    int bestMoveValue;
     private int myStoneWeight;
     private int myDistanceWeight;
     private int opponentStoneWeigh;
@@ -25,20 +24,27 @@ public class AlphaBetaAlgorithm implements Algorithm {
     }
 
     @Override
-    public Move getNextMove() {
+    public Move getNextMove(long timeMillis) {
         //reset best move
         bestMove = null;
 
         int rating = alphaBeta(depth, bm.myPlayerNumber, bm, Integer.MIN_VALUE, Integer.MAX_VALUE);
+        long timeLeft = System.currentTimeMillis() - timeMillis;
+        L.d(bm.myPlayerNumber, "time: " + timeLeft + " ms" + " Depth: " + depth);
+
+        if (timeLeft < 300) {
+            depth++;
+        }
 
         if (bestMove == null) {
             L.d(bm.myPlayerNumber, "Leider keine Zuege mehr verfuegbar");
             return null;
         }
 
-        L.d(bm.myPlayerNumber, "Rating: " + rating);
+        L.d(bm.myPlayerNumber, "Best move from : " + bestMove.fromX + "," + bestMove.fromY + " to " + bestMove.toX + "," + bestMove.toY + " Rating: " + rating);
 
         return bestMove;
+
     }
 
 
@@ -50,8 +56,9 @@ public class AlphaBetaAlgorithm implements Algorithm {
         if (depth == 0 || allPossibleMoves.size() == 0) {
             return rateBoard(bm, player);
         }
+        //Todo: moves vorsortieren
 
-        int alphaBeta = 0;
+        int bestMoveValue;
         int nextPlayer = (player + 1) % 3;
         bestMoveValue = alpha;
 
@@ -62,25 +69,22 @@ public class AlphaBetaAlgorithm implements Algorithm {
 
             int value = -1 * alphaBeta(depth - 1, nextPlayer, bmClone, -1 * beta, -1 * bestMoveValue);
 
-            if (bestMove == null || bestMoveValue < value) {
+            if (bestMoveValue < value) {
                 bestMove = m;
                 bestMoveValue = value;
             }
-
+            // Cutoff:
             if (bestMoveValue >= beta) {
                 break;
             }
 
             if (AlphaBetaAlgorithm.depth == depth) {
                 bestMove = m;
-                L.d(bm.myPlayerNumber, "Best move from : " + bestMove.fromX + "," + bestMove.fromY + " to " + bestMove.toX + "," + bestMove.toY);
-
             }
+
         }
 
-        alphaBeta = bestMoveValue;
-
-        return alphaBeta;
+        return bestMoveValue;
     }
 
     private int rateBoard(BoardManager bm, int player) {
@@ -104,25 +108,36 @@ public class AlphaBetaAlgorithm implements Algorithm {
     private static ArrayList<Move> getAllMoves(Board board, int myPlayerNumber) {
         int[][] fields = board.getFields();
         ArrayList<Move> moves = new ArrayList<>();
+        int playerStones = 0;
 
         for (int fromY = 7; fromY >= 0; fromY--) {
             int fromRowLength = fromY * 2 + 1;
             for (int fromX = 0; fromX < fromRowLength; fromX++) {
-
+//                boolean isPlayerOnField = board.isPlayerOnField(fromX, fromY, myPlayerNumber);
+//                if(!isPlayerOnField){
+//                    continue;
+//                }else{
+//                    playerStones++;
+//                }
                 for (int toY = fromY; toY >= fromY - 1; toY--) {
                     for (int toX = fromX - 1; toX <= fromX + 1; toX++) {
                         Move move = new Move(fromX, fromY, toX, toY);
+
                         boolean isValid = Board.isMoveValid(move, myPlayerNumber, fields);
                         if (isValid) {
                             moves.add(Board.translateMoveForPlayer(move, myPlayerNumber));
+//                            if(playerStones == Board.getPlayerStonesCount(myPlayerNumber)){
+//                                return moves;
+//                            }
                         }
+
                     }
                 }
 
             }
         }
 
-        //  L.d(myPlayerNumber, "valid moved found: " + moves.size());
+        // L.d(myPlayerNumber, "valid moved found: " + moves.size());
         return moves;
     }
 }

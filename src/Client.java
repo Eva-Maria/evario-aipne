@@ -42,15 +42,8 @@ public class Client implements Runnable {
         int myPlayerNumber = networkClient.getMyPlayerNumber();
         BoardManager bm = new BoardManager(myPlayerNumber);
         Algorithm algorithm;
-        if (myPlayerNumber == 0) {
-            algorithm = new AlphaBetaAlgorithm(bm, 6, 8, 3, 4);
 
-        } else if (myPlayerNumber == 1) {
-            algorithm = new AlphaBetaAlgorithm(bm, 4, 2, 2, 1);
-
-        } else {
-            algorithm = new AlphaBetaAlgorithm(bm, 2, 0, 1, 1);
-        }
+        algorithm = new AlphaBetaAlgorithm(bm, 4, 2, 2, 1);
 
         try {
             interact(networkClient, bm, algorithm);
@@ -79,9 +72,10 @@ public class Client implements Runnable {
     private void interact(NetworkClient networkClient, BoardManager bm, Algorithm algorithm) throws RuntimeException {
         while (true) {
             Move move = networkClient.receiveMove();
+            long timeMillis = System.currentTimeMillis();
 
             if (move == null) {
-                move = algorithm.getNextMove();
+                move = algorithm.getNextMove(timeMillis);
                 networkClient.sendMove(move);
                 continue;
             }

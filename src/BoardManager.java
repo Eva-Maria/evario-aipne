@@ -7,6 +7,7 @@ public class BoardManager {
 
     public static final String EXCEPTION_NO_PLAYER = "No player found";
     Board[] boards;
+
     int myPlayerNumber;
 
     public BoardManager(int myPlayerNumber) {
@@ -29,12 +30,34 @@ public class BoardManager {
     }
 
     public int updateBoard(Move move) {
-        int currentPlayer = getMasterBoard().determinePlayer(move);
+        int currentPlayer = getMasterBoard().determinePlayerFrom(move);
         if (currentPlayer == Board.EMPTY_FIELD) {
             throw new IllegalStateException(EXCEPTION_NO_PLAYER);
         }
+
+        int fieldOccupiedBy = getMasterBoard().determinePlayerTo(move);
+        boolean isOccupiedByOpponent = fieldOccupiedBy != currentPlayer && fieldOccupiedBy != Board.EMPTY_FIELD;
+        if (isOccupiedByOpponent) {
+            kickOpponentStone(fieldOccupiedBy);
+        }
+
         updateAllBoards(move, currentPlayer);
         return currentPlayer;
+    }
+
+    private void kickOpponentStone(int fieldOccupiedBy) {
+        switch (fieldOccupiedBy) {
+            case Board.FIRST_PLAYER:
+                Board.firstPlayerStones--;
+                break;
+            case Board.SECOND_PLAYER:
+                Board.secondPlayerStones--;
+                break;
+            case Board.THIRD_PLAYER:
+                Board.thirdPlayerStones--;
+            default:
+                break;
+        }
     }
 
     private void updateAllBoards(Move move, int currentPlayer) {
