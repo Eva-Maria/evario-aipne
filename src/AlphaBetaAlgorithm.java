@@ -100,10 +100,10 @@ public class AlphaBetaAlgorithm implements Algorithm {
     ArrayList<Move> getAllMoves(BoardManager bm, int player) {
         Board board = bm.getAllBoards()[player];
 
-        int[][] fields = board.getFields();
         ArrayList<Move> moves = new ArrayList<>();
         int playerStones = 0;
 
+        outerLoop:
         for (int fromY = 7; fromY >= 0; fromY--) {
             int fromRowLength = fromY * 2 + 1;
             for (int fromX = 0; fromX < fromRowLength; fromX++) {
@@ -113,27 +113,33 @@ public class AlphaBetaAlgorithm implements Algorithm {
                     continue;
                 } else {
                     if (playerStones == board.playerStones) {
-                        return moves;
+                        break outerLoop;
                     } else {
                         playerStones++;
                     }
                 }
 
-                for (int toY = fromY; toY >= fromY - 1; toY--) {
-                    for (int toX = fromX - 1; toX <= fromX + 1; toX++) {
-                        Move move = new Move(fromX, fromY, toX, toY);
-
-                        boolean isValid = Board.isMoveValid(move, player, fields);
-                        if (isValid) {
-                            moves.add(Board.translateMoveForPlayer(move, player));
-                        }
-
-                    }
+                if (fromX % 2 == 0) {
+                    moves.add(new Move(fromX, fromY, fromX + 1, fromY));
+                    moves.add(new Move(fromX, fromY, fromX - 1, fromY));
+                } else {
+                    moves.add(new Move(fromX, fromY, fromX - 1, fromY - 1));
                 }
-
             }
         }
 
-        return moves;
+        int[][] fields = board.getFields();
+        ArrayList<Move> validMovesSorted = new ArrayList<>();
+        for (Move move : moves) {
+            if (!Board.isMoveValid(move, player, fields)) {
+                continue;
+            }
+            Move translatedMove = Board.translateMoveForPlayer(move, player);
+            validMovesSorted.add(translatedMove);
+        }
+
+        // L.d(player, "Valid moves: " + validMovesSorted.size());
+
+        return validMovesSorted;
     }
 }
