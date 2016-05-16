@@ -75,7 +75,7 @@ public class Client implements Runnable {
             Move move = networkClient.receiveMove();
 
             if (move == null) {
-                move = algorithm.getNextMove(timeMillis);
+                move = algorithm.getNextMove(timeMillis, networkClient.getTimeLimitInSeconds() * 1000);
                 networkClient.sendMove(move);
                 continue;
             }

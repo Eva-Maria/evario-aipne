@@ -15,7 +15,7 @@ public class RandomAlgorithm implements Algorithm {
     }
 
     @Override
-    public Move getNextMove(long timeMillis) {
+    public Move getNextMove(long timeMillis, int timeLimitInSeconds) {
         Board myBoard = bm.getMyBoard();
 
         Move move = findMove(myBoard.getFields(), bm.myPlayerNumber);

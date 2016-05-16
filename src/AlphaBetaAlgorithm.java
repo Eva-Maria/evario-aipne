@@ -8,7 +8,7 @@ import java.util.ArrayList;
 public class AlphaBetaAlgorithm implements Algorithm {
 
     private BoardManager bm;
-    static int depth = 5;
+    int depth;
     Move bestMove;
     private int myStoneWeight;
     private int myDistanceWeight;
@@ -21,19 +21,20 @@ public class AlphaBetaAlgorithm implements Algorithm {
         this.myDistanceWeight = myDistanceWeight;
         this.opponentStoneWeigh = opponentStoneWeigh;
         this.opponentDistanceWeight = opponentDistanceWeight;
+        depth = 5;
     }
 
     @Override
-    public Move getNextMove(long timeMillis) {
+    public Move getNextMove(long timeStartMillis, int timeLimitMillis) {
         //reset best move
         bestMove = null;
 
         int rating = alphaBeta(depth, bm.myPlayerNumber, bm, Integer.MIN_VALUE, Integer.MAX_VALUE);
-        long timeLeft = System.currentTimeMillis() - timeMillis;
+        long timeUsedMillis = System.currentTimeMillis() - timeStartMillis;
 
-        L.d(bm.myPlayerNumber, "time: " + timeLeft + " ms" + " Depth: " + depth);
+        L.d(bm.myPlayerNumber, "time: " + timeUsedMillis + " ms" + " Depth: " + depth);
 
-        if (timeLeft < 300) {
+        if (timeUsedMillis < 300) {
             depth++;
         }
 
@@ -79,7 +80,7 @@ public class AlphaBetaAlgorithm implements Algorithm {
                 break;
             }
 
-            if (AlphaBetaAlgorithm.depth == currentDepth) {
+            if (depth == currentDepth) {
                 bestMove = m;
             }
 
