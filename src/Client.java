@@ -44,7 +44,17 @@ public class Client implements Runnable {
         L.addPlayer(name, myPlayerNumber);
 
         BoardManager bm = new BoardManager(myPlayerNumber);
-        Algorithm algorithm = new AlphaBetaAlgorithm(bm, 4, 2, 2, 1);
+        Algorithm algorithm = null;
+        switch (myPlayerNumber) {
+            case Board.FIRST_PLAYER:
+                algorithm = new RandomAlgorithm(bm);
+                break;
+            case Board.SECOND_PLAYER:
+                algorithm = new RandomAlgorithm(bm);
+                break;
+            case Board.THIRD_PLAYER:
+                algorithm = new AlphaBetaAlgorithm(bm, 4, 2, 2, 1);
+        }
 
         try {
             interact(networkClient, bm, algorithm);
