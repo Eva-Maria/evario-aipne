@@ -38,7 +38,7 @@ public class AlphaBetaRunner implements Runnable {
             return Integer.MIN_VALUE;
         }
 
-        ArrayList<Move> allPossibleMoves = algorithm.getAllMoves(bm.getAllBoards()[player], player);
+        ArrayList<Move> allPossibleMoves = algorithm.getAllMoves(bm, player);
 
         // L.d(bm.myPlayerNumber, "Player: " + player);
 

@@ -20,12 +20,10 @@ public class Board {
     static final int SECOND_PLAYER = 1;
     static final int THIRD_PLAYER = 2;
 
-    static int firstPlayerStones = 8;
-    static int secondPlayerStones = 8;
-    static int thirdPlayerStones = 8;
-
     private final int[][] fields; //[y][x]
     private Move lastMove;
+
+    int playerStones = 8;
 
     public Board() {
         int[][] fields = createEmptyFields();
@@ -34,20 +32,6 @@ public class Board {
         initPlayer(fields, THIRD_PLAYER);
 
         this.fields = fields;
-    }
-
-//    void setField(int[] xAndY, int player) {
-//        xAndY = initialTranslateFieldCoordinatesForPlayer(xAndY, player);
-//        fields[xAndY[1]][xAndY[0]] = player;
-//    }
-
-    public boolean makeMoveIfValid(Move move, int player) {
-        if (!isMoveValid(move, player, fields)) {
-            return false;
-        }
-
-        makeMove(move, player);
-        return true;
     }
 
     public void makeMove(Move move, int player) {
@@ -72,19 +56,6 @@ public class Board {
     public int[][] getFields() {
         // Only for tests
         return fields;
-    }
-
-    public static int getPlayerStonesCount(int player) {
-        switch (player) {
-            case Board.FIRST_PLAYER:
-                return Board.firstPlayerStones--;
-            case Board.SECOND_PLAYER:
-                return Board.secondPlayerStones--;
-            case Board.THIRD_PLAYER:
-                return Board.thirdPlayerStones--;
-            default:
-                return 0;
-        }
     }
 
     static boolean isMoveValid(Move move, int player, int[][] fields) {
@@ -135,9 +106,6 @@ public class Board {
 //        System.out.println(xAndY[0] + "," + xAndY[1] + " -> " + newY + "," + newX);
 
         int[] newXAndY = {newX, newY};
-        if (!isOnField(newXAndY)) {
-            throw new IllegalStateException("New coordinates are invalid");
-        }
 
         return newXAndY;
     }

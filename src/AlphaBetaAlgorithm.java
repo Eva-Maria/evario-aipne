@@ -97,7 +97,9 @@ public class AlphaBetaAlgorithm implements Algorithm {
         return rating;
     }
 
-    ArrayList<Move> getAllMoves(Board board, int myPlayerNumber) {
+    ArrayList<Move> getAllMoves(BoardManager bm, int player) {
+        Board board = bm.getAllBoards()[player];
+
         int[][] fields = board.getFields();
         ArrayList<Move> moves = new ArrayList<>();
         int playerStones = 0;
@@ -105,22 +107,25 @@ public class AlphaBetaAlgorithm implements Algorithm {
         for (int fromY = 7; fromY >= 0; fromY--) {
             int fromRowLength = fromY * 2 + 1;
             for (int fromX = 0; fromX < fromRowLength; fromX++) {
-//                boolean isPlayerOnField = board.isPlayerOnField(fromX, fromY, myPlayerNumber);
-//                if(!isPlayerOnField){
-//                    continue;
-//                }else{
-//                    playerStones++;
-//                }
+
+                boolean isPlayerOnField = board.isPlayerOnField(fromX, fromY, player);
+                if (!isPlayerOnField) {
+                    continue;
+                } else {
+                    if (playerStones == board.playerStones) {
+                        return moves;
+                    } else {
+                        playerStones++;
+                    }
+                }
+
                 for (int toY = fromY; toY >= fromY - 1; toY--) {
                     for (int toX = fromX - 1; toX <= fromX + 1; toX++) {
                         Move move = new Move(fromX, fromY, toX, toY);
 
-                        boolean isValid = Board.isMoveValid(move, myPlayerNumber, fields);
+                        boolean isValid = Board.isMoveValid(move, player, fields);
                         if (isValid) {
-                            moves.add(Board.translateMoveForPlayer(move, myPlayerNumber));
-//                            if(playerStones == Board.getPlayerStonesCount(myPlayerNumber)){
-//                                return moves;
-//                            }
+                            moves.add(Board.translateMoveForPlayer(move, player));
                         }
 
                     }
@@ -129,7 +134,6 @@ public class AlphaBetaAlgorithm implements Algorithm {
             }
         }
 
-        // L.d(myPlayerNumber, "valid moved found: " + moves.size());
         return moves;
     }
 }

@@ -9,6 +9,7 @@ public class BoardManager {
     Board[] boards;
 
     int myPlayerNumber;
+    int myStones = 8;
 
     public BoardManager(int myPlayerNumber) {
         this.myPlayerNumber = myPlayerNumber;
@@ -30,34 +31,20 @@ public class BoardManager {
     }
 
     public int updateBoard(Move move) {
-        int currentPlayer = getMasterBoard().determinePlayerFrom(move);
+        final Board masterBoard = getMasterBoard();
+
+        final int currentPlayer = masterBoard.determinePlayerFrom(move);
         if (currentPlayer == Board.EMPTY_FIELD) {
             throw new IllegalStateException(EXCEPTION_NO_PLAYER);
         }
 
-        int fieldOccupiedBy = getMasterBoard().determinePlayerTo(move);
-        boolean isOccupiedByOpponent = fieldOccupiedBy != currentPlayer && fieldOccupiedBy != Board.EMPTY_FIELD;
-        if (isOccupiedByOpponent) {
-            kickOpponentStone(fieldOccupiedBy);
+        int kickedPlayer = masterBoard.determinePlayerTo(move);
+        if (kickedPlayer != Board.EMPTY_FIELD) {
+            boards[kickedPlayer].playerStones--;
         }
 
         updateAllBoards(move, currentPlayer);
         return currentPlayer;
-    }
-
-    private void kickOpponentStone(int fieldOccupiedBy) {
-        switch (fieldOccupiedBy) {
-            case Board.FIRST_PLAYER:
-                Board.firstPlayerStones--;
-                break;
-            case Board.SECOND_PLAYER:
-                Board.secondPlayerStones--;
-                break;
-            case Board.THIRD_PLAYER:
-                Board.thirdPlayerStones--;
-            default:
-                break;
-        }
     }
 
     private void updateAllBoards(Move move, int currentPlayer) {
