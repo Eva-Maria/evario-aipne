@@ -71,8 +71,8 @@ public class Client implements Runnable {
 
     private void interact(NetworkClient networkClient, BoardManager bm, Algorithm algorithm) throws RuntimeException {
         while (true) {
-            Move move = networkClient.receiveMove();
             long timeMillis = System.currentTimeMillis();
+            Move move = networkClient.receiveMove();
 
             if (move == null) {
                 move = algorithm.getNextMove(timeMillis);

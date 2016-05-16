@@ -30,6 +30,7 @@ public class AlphaBetaAlgorithm implements Algorithm {
 
         int rating = alphaBeta(depth, bm.myPlayerNumber, bm, Integer.MIN_VALUE, Integer.MAX_VALUE);
         long timeLeft = System.currentTimeMillis() - timeMillis;
+
         L.d(bm.myPlayerNumber, "time: " + timeLeft + " ms" + " Depth: " + depth);
 
         if (timeLeft < 300) {
@@ -41,19 +42,19 @@ public class AlphaBetaAlgorithm implements Algorithm {
             return null;
         }
 
-        L.d(bm.myPlayerNumber, "Best move from : " + bestMove.fromX + "," + bestMove.fromY + " to " + bestMove.toX + "," + bestMove.toY + " Rating: " + rating);
+        L.d(bm.myPlayerNumber, "Best move : " + bestMove + " Rating: " + rating);
 
         return bestMove;
 
     }
 
 
-    public int alphaBeta(final int depth, final int player, final BoardManager bm, final int alpha, final int beta) {
+    public int alphaBeta(final int currentDepth, final int player, final BoardManager bm, final int alpha, final int beta) {
         ArrayList<Move> allPossibleMoves = getAllMoves(bm.getAllBoards()[player], player);
 
-        L.d(bm.myPlayerNumber, "Player: " + player);
+        // L.d(bm.myPlayerNumber, "Player: " + player);
 
-        if (depth == 0 || allPossibleMoves.size() == 0) {
+        if (currentDepth == 0 || allPossibleMoves.size() == 0) {
             return rateBoard(bm, player);
         }
         //Todo: moves vorsortieren
@@ -67,18 +68,18 @@ public class AlphaBetaAlgorithm implements Algorithm {
             BoardManager bmClone = BoardManager.clone(bm);
             bmClone.updateBoard(m);
 
-            int value = -1 * alphaBeta(depth - 1, nextPlayer, bmClone, -1 * beta, -1 * bestMoveValue);
+            int value = -1 * alphaBeta(currentDepth - 1, nextPlayer, bmClone, -1 * beta, -1 * bestMoveValue);
 
             if (bestMoveValue < value) {
-                bestMove = m;
                 bestMoveValue = value;
             }
-            // Cutoff:
+
+            // Cutoff
             if (bestMoveValue >= beta) {
                 break;
             }
 
-            if (AlphaBetaAlgorithm.depth == depth) {
+            if (AlphaBetaAlgorithm.depth == currentDepth) {
                 bestMove = m;
             }
 
