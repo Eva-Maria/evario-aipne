@@ -45,16 +45,16 @@ public class AlphaBetaRunner implements Runnable {
         if (currentDepth == 0 || allPossibleMoves.size() == 0) {
             return algorithm.rateBoard(bm, player);
         }
-        //Todo: moves vorsortieren
 
         int bestMoveValue;
         int nextPlayer = (player + 1) % 3;
         bestMoveValue = alpha;
 
         for (Move m : allPossibleMoves) {
+            Move translatedMove = Board.translateMoveForPlayer(m, player);
 
             BoardManager bmClone = BoardManager.clone(bm);
-            bmClone.updateBoard(m);
+            bmClone.updateBoard(translatedMove);
 
             int value = -1 * alphaBeta(currentDepth - 1, nextPlayer, bmClone, -1 * beta, -1 * bestMoveValue);
 
@@ -68,7 +68,7 @@ public class AlphaBetaRunner implements Runnable {
             }
 
             if (depth == currentDepth) {
-                bestMove = m;
+                bestMove = translatedMove;
             }
 
         }

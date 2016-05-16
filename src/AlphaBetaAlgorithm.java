@@ -1,6 +1,8 @@
 import lenz.htw.aipne.Move;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -128,18 +130,73 @@ public class AlphaBetaAlgorithm implements Algorithm {
             }
         }
 
+        if (moves.size() == 0) {
+            return moves;
+        }
+
         int[][] fields = board.getFields();
-        ArrayList<Move> validMovesSorted = new ArrayList<>();
+        final Comparator<Move> COMPARATOR = new Comparator<Move>() {
+            @Override
+            public int compare(Move move1, Move move2) {
+                int rate1 = rate(move1, fields, player);
+                int rate2 = rate(move2, fields, player);
+
+                if (rate1 < rate2) {
+                    return -1;
+                } else if (rate1 > rate2) {
+                    return 1;
+                } else {
+                    return 0;
+                }
+            }
+        };
+
+        final ArrayList<Move> validMovesSorted = new ArrayList<Move>() {
+            public boolean add(Move mt) {
+                int index = Collections.binarySearch(this, mt, COMPARATOR);
+                if (index < 0) {
+                    index = ~index;
+                }
+                super.add(index, mt);
+                return true;
+            }
+        };
+
         for (Move move : moves) {
             if (!Board.isMoveValid(move, player, fields)) {
                 continue;
             }
-            Move translatedMove = Board.translateMoveForPlayer(move, player);
-            validMovesSorted.add(translatedMove);
+
+            validMovesSorted.add(move);
         }
 
         // L.d(player, "Valid moves: " + validMovesSorted.size());
 
         return validMovesSorted;
+    }
+
+    public static int rate(Move move, int[][] fields, int player) {
+        int rating = 0;
+        int rowLength = move.fromY * 2 + 1;
+        if (move.toY == 0 && move.toX == 0) {
+            rating += 2;
+        } else {
+            rating += 1;
+        }
+
+        if (move.fromX % 2 == 0) {
+            if (move.fromX != 0) {
+                int neighbour = fields[move.fromY][move.fromX - 1];
+                if (neighbour != Board.EMPTY_FIELD && neighbour != player) {
+                    rating += 3;
+                }
+            } else if (move.fromX < rowLength - 1) {
+                int neighbour = fields[move.fromY][move.fromX + 1];
+                if (neighbour != Board.EMPTY_FIELD && neighbour != player) {
+                    rating += 3;
+                }
+            }
+        }
+        return rating;
     }
 }
