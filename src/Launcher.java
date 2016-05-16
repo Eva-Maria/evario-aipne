@@ -3,6 +3,9 @@ import lenz.htw.aipne.Server;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 
 /**
  * Created by eve on 4/11/16.
@@ -53,27 +56,57 @@ public class Launcher {
         System.setOut(interceptor);
     }
 
-    private static class Interceptor extends PrintStream {
+    static class Interceptor extends PrintStream {
 
         static final String FINAL_RESULT = "Final result:";
-        static final Runnable runnable = () -> {
+        static final String EXPORT = "EXP>";
+        static final char DELIMITER = ';';
+        static final String FILE_NAME = "results.csv";
+        static final String NEW_LINE = "\n";
+
+        boolean hasGameFinished = false;
+        StringBuffer buffer;
+        StringBuffer finalBuffer;
+
+        final Runnable runnable = () -> {
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
             }
+
+            try {
+                buffer.append(NEW_LINE);
+                String s = finalBuffer.toString() + buffer.toString();
+                Files.write(Paths.get(FILE_NAME), s.getBytes(), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
             System.exit(0);
         };
 
         Interceptor(OutputStream out) {
             super(out, true);
+            buffer = new StringBuffer();
+            finalBuffer = new StringBuffer();
         }
 
         @Override
         public void print(String s) {
+            boolean startsWithExport = s.trim().startsWith(EXPORT);
             if (s.trim().startsWith(FINAL_RESULT)) {
+                hasGameFinished = true;
                 new Thread(runnable).start();
+            } else if (startsWithExport) {
+                String info = s.replace(EXPORT, "");
+                buffer.append(info).append(DELIMITER);
+            } else if (hasGameFinished && s.startsWith(Client.TEAM_NAME)) {
+                finalBuffer.append(s).append(DELIMITER);
             }
-            super.print(s);
+
+            if (!startsWithExport) {
+                super.print(s);
+            }
         }
     }
 }

@@ -1,3 +1,5 @@
+import java.util.HashMap;
+
 /**
  * Created by m on 4/26/16.
  */
@@ -9,9 +11,15 @@ public class L {
     final static String redColor = (char) 27 + "[31m";
     final static String greenColor = (char) 27 + "[32m";
 
-    static void d(int player, String msg) {
+    private static HashMap<Integer, String> map = new HashMap<>();
+
+    static void addPlayer(String name, int number) {
+        map.put(number, name);
+    }
+
+    static void d(int number, String msg) {
         String color = blackColor;
-        switch (player) {
+        switch (number) {
             case Board.FIRST_PLAYER:
                 color = redColor;
                 break;
@@ -23,6 +31,10 @@ public class L {
                 break;
         }
 
-        System.out.println(color + "(Player " + player + ") " + msg + blackColor);
+        System.out.println(color + "(" + map.get(number) + " / " + number + ") " + msg + blackColor);
+    }
+
+    static void export(int number, String msg) {
+        System.out.println(Launcher.Interceptor.EXPORT + map.get(number) + ": " + msg);
     }
 }

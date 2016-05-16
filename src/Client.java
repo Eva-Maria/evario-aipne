@@ -12,24 +12,17 @@ import java.io.IOException;
 public class Client implements Runnable {
 
     public static final String INVALID_MOVE_EXCEPTION = "You got kicked because your move was invalid!";
-    public static final String TEAM_NAME = "Evario_";
+    public static final String SERVER_NOT_RUNNING_EXCEPTION = "Server seems not to be running.";
+
+    public static final String TEAM_NAME = "EVARIO ";
     public static final String ASSET_IMG = "assets/zebra.png";
 
     private BufferedImage logo;
     private Thread thread;
-    private String name;
     private String hostName;
-
-    public Client() {
-        //only for testing
-        name = "Test";
-        thread = new Thread(this);
-    }
 
     public Client(String hostName) throws IOException {
         this.hostName = hostName;
-        int random = (int) (Math.random() * 10);
-        this.name = TEAM_NAME + random;
         logo = ImageIO.read(new File(ASSET_IMG));
 
         thread = new Thread(this);
@@ -38,12 +31,20 @@ public class Client implements Runnable {
 
     @Override
     public void run() {
-        NetworkClient networkClient = getNetworkClient();
-        int myPlayerNumber = networkClient.getMyPlayerNumber();
-        BoardManager bm = new BoardManager(myPlayerNumber);
-        Algorithm algorithm;
+        int random = (int) (Math.random() * 10);
+        String name = TEAM_NAME + random;
 
-        algorithm = new AlphaBetaAlgorithm(bm, 4, 2, 2, 1);
+        NetworkClient networkClient;
+        try {
+            networkClient = new NetworkClient(hostName, name, logo);
+        } catch (Exception e) {
+            throw new RuntimeException(SERVER_NOT_RUNNING_EXCEPTION);
+        }
+        int myPlayerNumber = networkClient.getMyPlayerNumber();
+        L.addPlayer(name, myPlayerNumber);
+
+        BoardManager bm = new BoardManager(myPlayerNumber);
+        Algorithm algorithm = new AlphaBetaAlgorithm(bm, 4, 2, 2, 1);
 
         try {
             interact(networkClient, bm, algorithm);
@@ -58,14 +59,6 @@ public class Client implements Runnable {
             } else {
                 throw e;
             }
-        }
-    }
-
-    NetworkClient getNetworkClient() {
-        try {
-            return new NetworkClient(hostName, name, logo);
-        } catch (Exception e) {
-            throw new RuntimeException("Server seems not to be running.");
         }
     }
 
