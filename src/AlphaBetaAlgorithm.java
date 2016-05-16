@@ -1,19 +1,26 @@
 import lenz.htw.aipne.Move;
 
 import java.util.ArrayList;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by eve on 5/9/16.
  */
 public class AlphaBetaAlgorithm implements Algorithm {
 
+    private final ExecutorService threadPool;
     private BoardManager bm;
-    int depth;
+    int[] depths;
     Move bestMove;
+    int bestDepth;
+
     private int myStoneWeight;
     private int myDistanceWeight;
     private int opponentStoneWeigh;
     private int opponentDistanceWeight;
+
 
     public AlphaBetaAlgorithm(BoardManager bm, int myStoneWeight, int myDistanceWeight, int opponentStoneWeigh, int opponentDistanceWeight) {
         this.bm = bm;
@@ -21,75 +28,58 @@ public class AlphaBetaAlgorithm implements Algorithm {
         this.myDistanceWeight = myDistanceWeight;
         this.opponentStoneWeigh = opponentStoneWeigh;
         this.opponentDistanceWeight = opponentDistanceWeight;
-        depth = 5;
+
+
+        int cpuCores = Runtime.getRuntime().availableProcessors();
+        threadPool = Executors.newFixedThreadPool(cpuCores);
+        depths = new int[]{11, 13, 15, 8};
     }
 
     @Override
     public Move getNextMove(long timeStartMillis, int timeLimitMillis) {
-        //reset best move
         bestMove = null;
 
-        int rating = alphaBeta(depth, bm.myPlayerNumber, bm, Integer.MIN_VALUE, Integer.MAX_VALUE);
+        int randomId = (int) (Math.random() * 1000);
+        int numberOfWorkers = 5;
+
+        ArrayList<AlphaBetaRunner> workerThreads = new ArrayList<>(numberOfWorkers);
+        for (int depth : depths) {
+            BoardManager clonedBm = BoardManager.clone(bm);
+            final AlphaBetaRunner workerThread = new AlphaBetaRunner(depth, clonedBm, this, randomId);
+            workerThreads.add(workerThread);
+
+        }
+
+        for (AlphaBetaRunner workerThread : workerThreads) {
+            threadPool.execute(workerThread);
+        }
+
+        try {
+            threadPool.awaitTermination(timeLimitMillis - 300, TimeUnit.MILLISECONDS);
+            for (AlphaBetaRunner workerThread : workerThreads) {
+                workerThread.interrupt();
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
         long timeUsedMillis = System.currentTimeMillis() - timeStartMillis;
-
-        L.d(bm.myPlayerNumber, "time: " + timeUsedMillis + " ms" + " Depth: " + depth);
-
-        if (timeUsedMillis < 300) {
-            depth++;
-        }
-
+        L.d(bm.myPlayerNumber, "CLIENT " + randomId + "> time: " + timeUsedMillis + " ms" + " best Depth: " + bestDepth + ", best move : " + bestMove);
         if (bestMove == null) {
-            L.d(bm.myPlayerNumber, "Leider keine Zuege mehr verfuegbar");
-            return null;
+            return new Move(0, 0, 0, 0);
         }
-
-        L.d(bm.myPlayerNumber, "Best move : " + bestMove + " Rating: " + rating);
-
         return bestMove;
 
     }
 
-
-    public int alphaBeta(final int currentDepth, final int player, final BoardManager bm, final int alpha, final int beta) {
-        ArrayList<Move> allPossibleMoves = getAllMoves(bm.getAllBoards()[player], player);
-
-        // L.d(bm.myPlayerNumber, "Player: " + player);
-
-        if (currentDepth == 0 || allPossibleMoves.size() == 0) {
-            return rateBoard(bm, player);
+    synchronized void setBestMove(int depth, Move move) {
+        if (bestDepth < depth || bestMove == null) {
+            bestMove = move;
+            bestDepth = depth;
         }
-        //Todo: moves vorsortieren
-
-        int bestMoveValue;
-        int nextPlayer = (player + 1) % 3;
-        bestMoveValue = alpha;
-
-        for (Move m : allPossibleMoves) {
-
-            BoardManager bmClone = BoardManager.clone(bm);
-            bmClone.updateBoard(m);
-
-            int value = -1 * alphaBeta(currentDepth - 1, nextPlayer, bmClone, -1 * beta, -1 * bestMoveValue);
-
-            if (bestMoveValue < value) {
-                bestMoveValue = value;
-            }
-
-            // Cutoff
-            if (bestMoveValue >= beta) {
-                break;
-            }
-
-            if (depth == currentDepth) {
-                bestMove = m;
-            }
-
-        }
-
-        return bestMoveValue;
     }
 
-    private int rateBoard(BoardManager bm, int player) {
+    int rateBoard(BoardManager bm, int player) {
         Board[] allBoards = bm.getAllBoards();
 
         int rating = 0;
@@ -107,7 +97,7 @@ public class AlphaBetaAlgorithm implements Algorithm {
         return rating;
     }
 
-    private static ArrayList<Move> getAllMoves(Board board, int myPlayerNumber) {
+    ArrayList<Move> getAllMoves(Board board, int myPlayerNumber) {
         int[][] fields = board.getFields();
         ArrayList<Move> moves = new ArrayList<>();
         int playerStones = 0;
