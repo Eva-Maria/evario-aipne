@@ -250,18 +250,37 @@ public class Board {
 
     public int rate(int player, int stoneWeight, int distanceWeight) {
         int myStones = 0;
-        int distanceStart = 0;
+        int canBeat = 0;
+
         for (int y = fields.length - 1; y >= 0; y--) {
             int rowLength = y * 2 + 1;
 
             for (int x = 0; x < rowLength; x++) {
-                if (fields[y][x] == player) {
-                    myStones += stoneWeight;
-                    distanceStart += distanceWeight * (fields.length - y);
+                int field = fields[y][x];
+                if (field == player) {
+                    if (y == 0 && x == 0) {
+                        myStones += 2;
+                    } else {
+                        myStones += 1;
+                    }
+
+                    if (x % 2 == 0) {
+                        if (x != 0) {
+                            int neighbour = fields[y][x - 1];
+                            if (neighbour != EMPTY_FIELD && neighbour != player) {
+                                canBeat += 3;
+                            }
+                        } else if (x < rowLength - 1) {
+                            int neighbour = fields[y][x + 1];
+                            if (neighbour != EMPTY_FIELD && neighbour != player) {
+                                canBeat += 3;
+                            }
+                        }
+                    }
                 }
             }
         }
 
-        return myStones + distanceStart;
+        return myStones + canBeat;
     }
 }
