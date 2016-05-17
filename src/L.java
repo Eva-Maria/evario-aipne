@@ -35,6 +35,6 @@ public class L {
     }
 
     static void export(int number, String msg) {
-        System.out.println(Launcher.Interceptor.EXPORT + map.get(number) + ": " + msg);
+        System.out.println(SystemOutInterceptor.EXPORT + map.get(number) + ": " + msg);
     }
 }

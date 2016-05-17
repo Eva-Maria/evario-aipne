@@ -14,7 +14,6 @@ public class AlphaBetaAlgorithm implements Algorithm {
 
     private final ExecutorService threadPool;
 
-    private static final boolean USES_THREADS = true;
 
     private BoardManager bm;
     int[] depths;
@@ -25,7 +24,7 @@ public class AlphaBetaAlgorithm implements Algorithm {
         this.bm = bm;
 
         int cpuCores = 1;
-        if (USES_THREADS) {
+        if (Config.ALPHA_BETA_ALGORITHM_USES_THREADS) {
             cpuCores = Runtime.getRuntime().availableProcessors();
             depths = new int[]{9, 12, 15, 6};
         } else {
@@ -42,8 +41,7 @@ public class AlphaBetaAlgorithm implements Algorithm {
 
         int randomId = (int) (Math.random() * 1000);
 
-        if (USES_THREADS) {
-
+        if (Config.ALPHA_BETA_ALGORITHM_USES_THREADS) {
             ArrayList<AlphaBetaRunner> workerThreads = new ArrayList<>(depths.length);
             for (int depth : depths) {
                 BoardManager clonedBm = BoardManager.clone(bm);
@@ -183,7 +181,7 @@ public class AlphaBetaAlgorithm implements Algorithm {
     public static int rate(Move move, int[][] fields, int player) {
         int rating = 0;
         if (move.toY == 0 && move.toX == 0) {
-            rating += 2;
+            rating += Config.ALPHA_BETA_ALGORITHM_WEIGHT_CORNER;
         }
 
         if (move.fromX % 2 == 0) {
@@ -192,13 +190,13 @@ public class AlphaBetaAlgorithm implements Algorithm {
             if (move.toX != 0 && move.toX < rowLength - 1) {
                 int neighbour = fields[move.toY][move.toX];
                 if (neighbour != Board.EMPTY_FIELD && neighbour != player) {
-                    rating += 2;
+                    rating += Config.ALPHA_BETA_ALGORITHM_WEIGHT_BEAT_OPPONENT;
                 }
             }
         }
 
         if (move.toY < move.fromY && move.toY >= 4) {
-            rating += 1;
+            rating += Config.ALPHA_BETA_ALGORITHM_WEIGHT_MOVE_FORWARD_TO_CENTER;
         }
 
 

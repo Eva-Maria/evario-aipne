@@ -103,8 +103,6 @@ public class Board {
         int newX = 2 * xAndY[1] - xAndY[0];
         int newY = (int) Math.ceil((14 - xAndY[0]) / 2f);
 
-//        System.out.println(xAndY[0] + "," + xAndY[1] + " -> " + newY + "," + newX);
-
         int[] newXAndY = {newX, newY};
 
         return newXAndY;
@@ -262,7 +260,7 @@ public class Board {
 
                 if (field == player) {
                     if (y == 0 && x == 0) {
-                        currentRating += 2;
+                        currentRating += Config.ALPHA_BETA_ALGORITHM_WEIGHT_CORNER;
                     }
 
                     if (x % 2 != 0) {
@@ -272,11 +270,11 @@ public class Board {
 //                            L.d(player, "\n" + oldBoard.toString());
 //                            L.d(player, lastMove.toString());
 //                            L.d(player, "\n" + toString());
-                            currentRating += 2;
+                            currentRating += Config.ALPHA_BETA_ALGORITHM_WEIGHT_BEAT_OPPONENT;
                         }
                     }
                     if (lastMove.toY < lastMove.fromY && lastMove.toY >= 4) {
-                        currentRating += 1;
+                        currentRating += Config.ALPHA_BETA_ALGORITHM_WEIGHT_MOVE_FORWARD_TO_CENTER;
                     }
 
                 }

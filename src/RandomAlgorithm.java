@@ -7,7 +7,7 @@ import java.util.ArrayList;
  */
 public class RandomAlgorithm implements Algorithm {
 
-    public static final boolean IS_RANDOM = true;
+    public static final String RANDOM_VALID_MOVES_FOUND = "random valid moves found: ";
     private BoardManager bm;
 
     public RandomAlgorithm(BoardManager bm) {
@@ -47,12 +47,12 @@ public class RandomAlgorithm implements Algorithm {
             return new Move(0, 0, 0, 0);
         }
 
-        if (!IS_RANDOM) {
+        if (Config.RANDOM_ALGORITHM_SIMPLY_TAKES_FIRST_MOVE) {
             return moves.get(0);
         }
 
         int index = (int) (Math.random() * moves.size());
-        L.d(myPlayerNumber, "valid moved found: " + moves.size());
+        L.d(myPlayerNumber, RANDOM_VALID_MOVES_FOUND + moves.size());
         return moves.get(index);
     }
 }

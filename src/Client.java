@@ -14,8 +14,9 @@ public class Client implements Runnable {
     public static final String INVALID_MOVE_EXCEPTION = "You got kicked because your move was invalid!";
     public static final String SERVER_NOT_RUNNING_EXCEPTION = "Server seems not to be running.";
 
-    public static final String TEAM_NAME = "EVARIO ";
-    public static final String ASSET_IMG = "assets/zebra.png";
+
+    public static final String KICKED_OUT = "kicked out.";
+    public static final String NO_PLAYER_FOUND = "no player found";
 
     private BufferedImage logo;
     private Thread thread;
@@ -23,7 +24,7 @@ public class Client implements Runnable {
 
     public Client(String hostName) throws IOException {
         this.hostName = hostName;
-        logo = ImageIO.read(new File(ASSET_IMG));
+        logo = ImageIO.read(new File(Config.ASSET_IMG));
 
         thread = new Thread(this);
         thread.start();
@@ -32,29 +33,14 @@ public class Client implements Runnable {
     @Override
     public void run() {
         int random = (int) (Math.random() * 10);
-        String name = TEAM_NAME + random;
+        String name = Config.TEAM_NAME + random;
 
-        NetworkClient networkClient;
-        try {
-            networkClient = new NetworkClient(hostName, name, logo);
-        } catch (Exception e) {
-            throw new RuntimeException(SERVER_NOT_RUNNING_EXCEPTION);
-        }
+        NetworkClient networkClient = getNetworkClient(name);
         int myPlayerNumber = networkClient.getMyPlayerNumber();
         L.addPlayer(name, myPlayerNumber);
 
         BoardManager bm = new BoardManager(myPlayerNumber);
-        Algorithm algorithm = null;
-        switch (myPlayerNumber) {
-            case Board.FIRST_PLAYER:
-                algorithm = new RandomAlgorithm(bm);
-                break;
-            case Board.SECOND_PLAYER:
-                algorithm = new RandomAlgorithm(bm);
-                break;
-            case Board.THIRD_PLAYER:
-                algorithm = new AlphaBetaAlgorithm(bm);
-        }
+        Algorithm algorithm = Config.getAlgorithmForPlayer(myPlayerNumber, bm);
 
         try {
             interact(networkClient, bm, algorithm);
@@ -63,22 +49,33 @@ public class Client implements Runnable {
                 throw e;
             }
             if (e.getMessage().startsWith(INVALID_MOVE_EXCEPTION)) {
-                L.d(myPlayerNumber, "kicked out.");
+                L.d(myPlayerNumber, KICKED_OUT);
             } else if (e.getMessage().startsWith(BoardManager.EXCEPTION_NO_PLAYER)) {
-                L.d(myPlayerNumber, "no player found");
+                L.d(myPlayerNumber, NO_PLAYER_FOUND);
             } else {
                 throw e;
             }
         }
     }
 
+    private NetworkClient getNetworkClient(String name) {
+        NetworkClient networkClient;
+        try {
+            networkClient = new NetworkClient(hostName, name, logo);
+        } catch (Exception e) {
+            throw new RuntimeException(SERVER_NOT_RUNNING_EXCEPTION);
+        }
+        return networkClient;
+    }
+
     private void interact(NetworkClient networkClient, BoardManager bm, Algorithm algorithm) throws RuntimeException {
         while (true) {
-            long timeMillis = System.currentTimeMillis();
+            final long timeMillis = System.currentTimeMillis();
             Move move = networkClient.receiveMove();
 
             if (move == null) {
-                move = algorithm.getNextMove(timeMillis, networkClient.getTimeLimitInSeconds() * 1000);
+                final int timeLimitInSeconds = networkClient.getTimeLimitInSeconds() * 1000;
+                move = algorithm.getNextMove(timeMillis, timeLimitInSeconds);
                 networkClient.sendMove(move);
                 continue;
             }
