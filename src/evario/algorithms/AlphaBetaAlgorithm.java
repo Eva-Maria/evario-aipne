@@ -69,8 +69,7 @@ public class AlphaBetaAlgorithm implements Algorithm {
         }
 
         final long timeUsedMillis = System.currentTimeMillis() - timeStartMillis;
-
-        L.d(bm.myPlayerNumber, "CLIENT " + randomId + "> time: " + timeUsedMillis + " ms" + " best Depth: " + bestDepth + ", best move : " + bestMove);
+        L.export(bm.myPlayerNumber, "MASTER " + randomId + ">\ttime:" + timeUsedMillis + "\t,depth:" + bestDepth + "\t,move:" + bestMove);
 
         if (bestMove == null) {
             return new Move(0, 0, 0, 0);

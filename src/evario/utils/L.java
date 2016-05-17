@@ -38,7 +38,7 @@ public class L {
         System.out.println(color + "(" + map.get(number) + " / " + number + ") " + msg + blackColor);
     }
 
-    static void export(int number, String msg) {
+    public static void export(int number, String msg) {
         System.out.println(SystemOutInterceptor.EXPORT + map.get(number) + ": " + msg);
     }
 }

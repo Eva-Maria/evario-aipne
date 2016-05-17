@@ -2,7 +2,6 @@ package evario;
 
 import evario.algorithms.Algorithm;
 import evario.algorithms.AlphaBetaAlgorithm;
-import evario.algorithms.RandomAlgorithm;
 import evario.game.Board;
 import evario.game.BoardManager;
 
@@ -32,9 +31,9 @@ public class Config {
     public static Algorithm getAlgorithmForPlayer(final int myPlayerNumber, BoardManager bm) {
         switch (myPlayerNumber) {
             case Board.FIRST_PLAYER:
-                return new RandomAlgorithm(bm);
+                return new AlphaBetaAlgorithm(bm);
             case Board.SECOND_PLAYER:
-                return new RandomAlgorithm(bm);
+                return new AlphaBetaAlgorithm(bm);
             case Board.THIRD_PLAYER:
                 return new AlphaBetaAlgorithm(bm);
         }

@@ -33,8 +33,7 @@ public class AlphaBetaRunner implements Runnable {
         int rating = alphaBeta(depth, bm.myPlayerNumber, bm, bm, Integer.MIN_VALUE, Integer.MAX_VALUE);
 
         long timeUsed = System.currentTimeMillis() - timeStart;
-        L.d(bm.myPlayerNumber, "THREAD " + id + "> time: " + timeUsed + " ms" + " depth: " + depth + ", best move : " + bestMove + ", rating: " + rating + ", interrupted: " + isInterrupted);
-
+        L.export(bm.myPlayerNumber, "THREAD" + id + ">\ttime:" + timeUsed + "\t,depth:" + depth + "\t,move:" + bestMove + "\t,rating:" + rating + "\t,interrupted:" + isInterrupted);
         algorithm.setBestMove(depth, bestMove);
     }
 
@@ -63,7 +62,7 @@ public class AlphaBetaRunner implements Runnable {
             BoardManager bmClone = BoardManager.clone(bm);
             bmClone.updateBoard(translatedMove);
 
-            int value = -1 * alphaBeta(currentDepth - 1, nextPlayer, bm,  bmClone, -1 * beta, -1 * bestMoveValue);
+            int value = -1 * alphaBeta(currentDepth - 1, nextPlayer, bm, bmClone, -1 * beta, -1 * bestMoveValue);
 //            L.d(bm.myPlayerNumber, "rating "+value+" for player "+ player + " with depth " + currentDepth + " with move " + translatedMove);
 
             if (bestMoveValue < value) {
