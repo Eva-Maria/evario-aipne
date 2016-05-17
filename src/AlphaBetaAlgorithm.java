@@ -29,7 +29,7 @@ public class AlphaBetaAlgorithm implements Algorithm {
             cpuCores = Runtime.getRuntime().availableProcessors();
             depths = new int[]{11, 13, 15, 8};
         } else {
-            depths = new int[]{1};
+            depths = new int[]{3};
         }
 
         threadPool = Executors.newFixedThreadPool(cpuCores);
@@ -101,7 +101,7 @@ public class AlphaBetaAlgorithm implements Algorithm {
             Board board = allBoards[currentPlayer];
             Board oldBoard = oldAllBoards[currentPlayer];
             if (currentPlayer == player) {
-                rating += board.rate(oldBoard, currentPlayer);
+                rating += board.rate(oldBoard, currentPlayer) * 2;
             } else {
                 rating -= board.rate(oldBoard, currentPlayer);
             }

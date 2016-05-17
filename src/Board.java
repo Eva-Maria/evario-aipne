@@ -270,7 +270,7 @@ public class Board {
                     if (x % 2 != 0) {
                         int neighbour = oldFields[y][x];
                         if (neighbour != EMPTY_FIELD && neighbour != player) {
-                            L.d(player, "detected neighbour, previous on " + x + "," + y);
+                            L.d(player, "detected opponent, was previous beaten on " + x + "," + y);
                             L.d(player, "\n" + oldBoard.toString());
                             L.d(player, lastMove.toString());
                             L.d(player, "\n" + toString());

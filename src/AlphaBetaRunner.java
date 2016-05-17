@@ -25,6 +25,7 @@ public class AlphaBetaRunner implements Runnable {
     public void run() {
         long timeStart = System.currentTimeMillis();
 
+//        int rating = alphaBeta(depth, bm.myPlayerNumber, bm, bm, Integer.MIN_VALUE, Integer.MAX_VALUE);
         int rating = alphaBeta(depth, bm.myPlayerNumber, bm, bm, Integer.MIN_VALUE, Integer.MAX_VALUE);
 
         long timeUsed = System.currentTimeMillis() - timeStart;
@@ -38,11 +39,13 @@ public class AlphaBetaRunner implements Runnable {
             return Integer.MIN_VALUE;
         }
 
+        if (currentDepth == 0) {
+            return algorithm.rateBoard(oldBm, bm, player);
+        }
+
         ArrayList<Move> allPossibleMoves = algorithm.getAllMoves(bm, player);
 
-        // L.d(bm.myPlayerNumber, "Player: " + player);
-
-        if (currentDepth == 0 || allPossibleMoves.size() == 0) {
+        if (allPossibleMoves.size() == 0) {
             return algorithm.rateBoard(oldBm, bm, player);
         }
 
@@ -57,20 +60,20 @@ public class AlphaBetaRunner implements Runnable {
             bmClone.updateBoard(translatedMove);
 
             int value = -1 * alphaBeta(currentDepth - 1, nextPlayer, bm,  bmClone, -1 * beta, -1 * bestMoveValue);
+//            L.d(bm.myPlayerNumber, "rating "+value+" for player "+ player + " with depth " + currentDepth + " with move " + translatedMove);
 
             if (bestMoveValue < value) {
                 bestMoveValue = value;
-            }
 
-            // Cutoff
-            if (bestMoveValue >= beta) {
-                break;
-            }
+                // Cutoff
+                if (bestMoveValue >= beta) {
+                    break;
+                }
 
-            if (depth == currentDepth) {
-                bestMove = translatedMove;
+                if (depth == currentDepth) {
+                    bestMove = translatedMove;
+                }
             }
-
         }
 
         return bestMoveValue;
