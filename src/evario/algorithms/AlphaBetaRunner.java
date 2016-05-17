@@ -44,13 +44,13 @@ public class AlphaBetaRunner implements Runnable {
         }
 
         if (currentDepth == 0) {
-            return algorithm.rateBoard(oldBm, bm, player);
+            return algorithm.rateAllBoards(oldBm, bm, player);
         }
 
         ArrayList<Move> allPossibleMoves = algorithm.getAllMoves(bm, player);
 
         if (allPossibleMoves.size() == 0) {
-            return algorithm.rateBoard(oldBm, bm, player);
+            return algorithm.rateAllBoards(oldBm, bm, player);
         }
 
         int bestMoveValue;

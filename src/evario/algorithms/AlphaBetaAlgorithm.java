@@ -18,10 +18,10 @@ import java.util.concurrent.TimeUnit;
  */
 public class AlphaBetaAlgorithm implements Algorithm {
 
-    private final ExecutorService threadPool;
+    final private ExecutorService threadPool;
+    final private BoardManager bm;
+    final private int[] depths;
 
-    private BoardManager bm;
-    int[] depths;
     Move bestMove;
     int bestDepth;
 
@@ -40,9 +40,9 @@ public class AlphaBetaAlgorithm implements Algorithm {
         final int randomId = (int) (Math.random() * 1000);
 
         if (Config.ALPHA_BETA_ALGORITHM_USES_THREADS) {
-            ArrayList<AlphaBetaRunner> workerThreads = new ArrayList<>(depths.length);
+            final ArrayList<AlphaBetaRunner> workerThreads = new ArrayList<>(depths.length);
             for (int depth : depths) {
-                BoardManager clonedBm = BoardManager.clone(bm);
+                final BoardManager clonedBm = BoardManager.clone(bm);
                 final AlphaBetaRunner workerThread = new AlphaBetaRunner(depth, clonedBm, this, randomId);
                 workerThreads.add(workerThread);
             }
@@ -52,7 +52,7 @@ public class AlphaBetaAlgorithm implements Algorithm {
             }
 
             try {
-                threadPool.awaitTermination(timeLimitMillis - 300, TimeUnit.MILLISECONDS);
+                threadPool.awaitTermination(timeLimitMillis - Config.ALPHA_BETA_ALGORITHM_THREAD_LATENCY, TimeUnit.MILLISECONDS);
                 for (AlphaBetaRunner workerThread : workerThreads) {
                     workerThread.interrupt();
                 }
@@ -63,9 +63,8 @@ public class AlphaBetaAlgorithm implements Algorithm {
             try {
                 Thread.sleep(350);
             } catch (InterruptedException e) {
-                e.printStackTrace();
             }
-            BoardManager clonedBm = BoardManager.clone(bm);
+            final BoardManager clonedBm = BoardManager.clone(bm);
             new AlphaBetaRunner(depths[0], clonedBm, this, randomId).run();
         }
 
@@ -87,12 +86,12 @@ public class AlphaBetaAlgorithm implements Algorithm {
         }
     }
 
-    int rateBoard(BoardManager oldBm, BoardManager bm, int player) {
-        Board[] allBoards = bm.getAllBoards();
-        Board[] oldAllBoards = oldBm.getAllBoards();
+    int rateAllBoards(BoardManager oldBm, BoardManager bm, int player) {
+        final Board[] allBoards = bm.getAllBoards();
+        final Board[] oldAllBoards = oldBm.getAllBoards();
 
         int rating = 0;
-        //  rating += allBoards[player].rateBoard(oldAllBoards[player], player);
+        //  rating += Rating.rateBoard(oldAllBoards[player], allBoards[player], player);
 
         for (int currentPlayer = 0; currentPlayer < allBoards.length; currentPlayer++) {
             Board board = allBoards[currentPlayer];
@@ -108,9 +107,9 @@ public class AlphaBetaAlgorithm implements Algorithm {
     }
 
     ArrayList<Move> getAllMoves(BoardManager bm, int player) {
-        Board board = bm.getAllBoards()[player];
+        final Board board = bm.getAllBoards()[player];
 
-        ArrayList<Move> moves = new ArrayList<>();
+        final ArrayList<Move> moves = new ArrayList<>();
         int playerStones = 0;
 
         outerLoop:
@@ -142,7 +141,7 @@ public class AlphaBetaAlgorithm implements Algorithm {
             return moves;
         }
 
-        int[][] fields = board.getFields();
+        final int[][] fields = board.getFields();
         final Comparator<Move> COMPARATOR = (move1, move2) -> {
             int rate1 = Rating.rateMove(move1, fields, player);
             int rate2 = Rating.rateMove(move2, fields, player);
