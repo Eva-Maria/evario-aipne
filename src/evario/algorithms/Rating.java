@@ -35,11 +35,11 @@ public class Rating {
 
     public static int rateBoard(final Board oldBoard, final Board currentBoard, final int player) {
         int rating = 0;
-        int playerStones = 0;
+//        int playerStones = 0;
         final int[][] fields = currentBoard.getFields();
         final int[][] oldFields = oldBoard.getFields();
 
-        outerLoop:
+//        outerLoop:
         for (int y = fields.length - 1; y >= 0; y--) {
             final int rowLength = y * 2 + 1;
 
@@ -49,11 +49,11 @@ public class Rating {
                     continue;
                 }
 
-                if (playerStones == currentBoard.playerStones) {
-                    break outerLoop;
-                } else {
-                    playerStones++;
-                }
+//                if (playerStones == currentBoard.playerStones) {
+//                    break outerLoop;
+//                } else {
+//                    playerStones++;
+//                }
 
                 int currentRating = 0;
 
