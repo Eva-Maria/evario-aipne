@@ -119,15 +119,14 @@ public class AlphaBetaRunner implements Runnable {
             final int fromRowLength = fromY * 2 + 1;
             for (int fromX = 0; fromX < fromRowLength; fromX++) {
 
-                boolean isPlayerOnField = board.isPlayerOnField(fromX, fromY, player);
-                if (!isPlayerOnField) {
-                    continue;
-                } else {
+                if (player == fields[fromY][fromX]) {
                     if (playerStones == board.playerStones) {
                         break outerLoop;
                     } else {
                         playerStones++;
                     }
+                } else {
+                    continue;
                 }
 
                 if (fromX % 2 == 0) {

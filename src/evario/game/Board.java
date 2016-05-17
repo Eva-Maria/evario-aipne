@@ -51,10 +51,6 @@ public class Board {
         return fields[move.toY][move.toX];
     }
 
-    public boolean isPlayerOnField(int x, int y, int player) {
-        return fields[y][x] == player;
-    }
-
     public int[][] getFields() {
         // Only for tests
         return fields;
