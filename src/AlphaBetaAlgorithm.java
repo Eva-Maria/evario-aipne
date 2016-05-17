@@ -199,8 +199,6 @@ public class AlphaBetaAlgorithm implements Algorithm {
         int rating = 0;
         if (move.toY == 0 && move.toX == 0) {
             rating += 2;
-        } else {
-            rating += 1;
         }
 
         if (move.fromX % 2 == 0) {
@@ -209,10 +207,16 @@ public class AlphaBetaAlgorithm implements Algorithm {
             if (move.toX != 0 && move.toX < rowLength - 1) {
                 int neighbour = fields[move.toY][move.toX];
                 if (neighbour != Board.EMPTY_FIELD && neighbour != player) {
-                    rating += 1;
+                    rating += 2;
                 }
             }
         }
+
+        if (move.toY < move.fromY && move.toY >= 4) {
+            rating += 1;
+        }
+
+
         return rating;
     }
 }
