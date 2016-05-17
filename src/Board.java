@@ -261,44 +261,26 @@ public class Board {
                 int currentRating = 0;
 
                 if (field == player) {
-                    if (y == 0 && x == 0) {
-                        currentRating += 4;
-                    } else {
-                        currentRating += 2;
+//                    if (y == 0 && x == 0) {
+//                        currentRating += 4;
+//                    } else {
+//                        currentRating += 2;
+//                    }
+
+                    if (x % 2 != 0) {
+                        int neighbour = oldFields[y][x];
+                        if (neighbour != EMPTY_FIELD && neighbour != player) {
+                            L.d(player, "detected neighbour, previous on " + x + "," + y);
+                            L.d(player, "\n" + oldBoard.toString());
+                            L.d(player, lastMove.toString());
+                            L.d(player, "\n" + toString());
+                            currentRating += 4;
+                        }
                     }
 
-//                    if (x % 2 != 0) {
-//                        int neighbour1 = oldFields[y][x - 1];
-//                        if (neighbour1 != EMPTY_FIELD && neighbour1 != player) {
-//                            currentRating += 3;
-//                        }
-//
-//                        int neighbour2 = oldFields[y][x + 1];
-//                        if (neighbour2 != EMPTY_FIELD && neighbour2 != player) {
-//                            currentRating += 3;
-//                        }
-//                    }
-
-//                    if (x % 2 == 0) {
-//                        if (x != 0) {
-//                            int neighbour = fields[y][x - 1];
-//                            if (neighbour != EMPTY_FIELD && neighbour != player) {
-//                                currentRating += 3;
-//                            }
-//                        } else if (x < rowLength - 1) {
-//                            int neighbour = fields[y][x + 1];
-//                            if (neighbour != EMPTY_FIELD && neighbour != player) {
-//                                currentRating += 3;
-//                            }
-//                        }
-//                    }
-
-                } else if (field != EMPTY_FIELD) {
-                    currentRating -= 1;
                 }
 
                 rating += currentRating;
-//
             }
         }
         return rating;
