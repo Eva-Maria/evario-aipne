@@ -176,6 +176,7 @@ public class Board {
         if (board.lastMove != null) {
             cloned.lastMove = new Move(board.lastMove.fromX, board.lastMove.fromY, board.lastMove.toX, board.lastMove.toY);
         }
+        cloned.playerStones = board.playerStones;
 
         return cloned;
     }
@@ -248,35 +249,56 @@ public class Board {
         return header.toString() + PRINT_NEW_LINE + builder.toString();
     }
 
-    public int rate(int player, int stoneWeight, int distanceWeight) {
+    public int rate(BoardManager oldBm, int player) {
         int rating = 0;
+        int[][] oldFields = oldBm.getAllBoards()[player].getFields();
 
-        for (int y = fields.length - 1; y >= 0; y--) {
+        for (int y = this.fields.length - 1; y >= 0; y--) {
             int rowLength = y * 2 + 1;
 
             for (int x = 0; x < rowLength; x++) {
-                int field = fields[y][x];
+                int field = this.fields[y][x];
+                int currentRating = 0;
+
                 if (field == player) {
                     if (y == 0 && x == 0) {
-                        rating += 2;
+                        currentRating += 4;
                     } else {
-                        rating += 1;
+                        currentRating += 2;
                     }
 
-                    if (x % 2 == 0) {
-                        if (x != 0) {
-                            int neighbour = fields[y][x - 1];
-                            if (neighbour != EMPTY_FIELD && neighbour != player) {
-                                rating += 3;
-                            }
-                        } else if (x < rowLength - 1) {
-                            int neighbour = fields[y][x + 1];
-                            if (neighbour != EMPTY_FIELD && neighbour != player) {
-                                rating += 3;
-                            }
-                        }
-                    }
+//                    if (x % 2 != 0) {
+//                        int neighbour1 = oldFields[y][x - 1];
+//                        if (neighbour1 != EMPTY_FIELD && neighbour1 != player) {
+//                            currentRating += 3;
+//                        }
+//
+//                        int neighbour2 = oldFields[y][x + 1];
+//                        if (neighbour2 != EMPTY_FIELD && neighbour2 != player) {
+//                            currentRating += 3;
+//                        }
+//                    }
+
+//                    if (x % 2 == 0) {
+//                        if (x != 0) {
+//                            int neighbour = fields[y][x - 1];
+//                            if (neighbour != EMPTY_FIELD && neighbour != player) {
+//                                currentRating += 3;
+//                            }
+//                        } else if (x < rowLength - 1) {
+//                            int neighbour = fields[y][x + 1];
+//                            if (neighbour != EMPTY_FIELD && neighbour != player) {
+//                                currentRating += 3;
+//                            }
+//                        }
+//                    }
+
+                } else if (field != EMPTY_FIELD) {
+                    currentRating -= 1;
                 }
+
+                rating += currentRating;
+//
             }
         }
         return rating;

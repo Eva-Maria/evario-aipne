@@ -24,7 +24,7 @@ public class Launcher {
     public static void main(String... args) throws IOException {
         String hostName = "127.0.0.1";
 
-//        wrapSystemOut();
+        wrapSystemOut();
 
         if (args.length >= 1) {
             hostName = args[0];
@@ -82,7 +82,7 @@ public class Launcher {
                 e.printStackTrace();
             }
 
-            System.exit(0);
+//            System.exit(0);
         };
 
         Interceptor(OutputStream out) {
@@ -93,20 +93,18 @@ public class Launcher {
 
         @Override
         public void print(String s) {
-            boolean startsWithExport = s.trim().startsWith(EXPORT);
-            if (s.trim().startsWith(FINAL_RESULT)) {
-                hasGameFinished = true;
-                new Thread(runnable).start();
-            } else if (startsWithExport) {
+            if (s.trim().startsWith(EXPORT)) {
                 String info = s.replace(EXPORT, "");
                 buffer.append(info).append(DELIMITER);
+            } else if (s.trim().startsWith(FINAL_RESULT)) {
+                hasGameFinished = true;
+                new Thread(runnable).start();
             } else if (hasGameFinished && s.startsWith(Client.TEAM_NAME)) {
                 finalBuffer.append(s).append(DELIMITER);
             }
 
-            if (!startsWithExport) {
-                super.print(s);
-            }
+            super.print(s);
+
         }
     }
 }

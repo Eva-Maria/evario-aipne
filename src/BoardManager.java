@@ -9,7 +9,6 @@ public class BoardManager {
     Board[] boards;
 
     int myPlayerNumber;
-    int myStones = 8;
 
     public BoardManager(int myPlayerNumber) {
         this.myPlayerNumber = myPlayerNumber;

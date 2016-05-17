@@ -25,7 +25,7 @@ public class AlphaBetaRunner implements Runnable {
     public void run() {
         long timeStart = System.currentTimeMillis();
 
-        int rating = alphaBeta(depth, bm.myPlayerNumber, bm, Integer.MIN_VALUE, Integer.MAX_VALUE);
+        int rating = alphaBeta(depth, bm.myPlayerNumber, bm, bm, Integer.MIN_VALUE, Integer.MAX_VALUE);
 
         long timeUsed = System.currentTimeMillis() - timeStart;
         L.d(bm.myPlayerNumber, "THREAD " + id + "> time: " + timeUsed + " ms" + " depth: " + depth + ", best move : " + bestMove + ", rating: " + rating + ", interrupted: " + isInterrupted);
@@ -33,7 +33,7 @@ public class AlphaBetaRunner implements Runnable {
         algorithm.setBestMove(depth, bestMove);
     }
 
-    public int alphaBeta(final int currentDepth, final int player, final BoardManager bm, final int alpha, final int beta) {
+    public int alphaBeta(final int currentDepth, final int player, BoardManager oldBm, final BoardManager bm, final int alpha, final int beta) {
         if (isInterrupted) {
             return Integer.MIN_VALUE;
         }
@@ -43,7 +43,7 @@ public class AlphaBetaRunner implements Runnable {
         // L.d(bm.myPlayerNumber, "Player: " + player);
 
         if (currentDepth == 0 || allPossibleMoves.size() == 0) {
-            return algorithm.rateBoard(bm, player);
+            return algorithm.rateBoard(oldBm, bm, player);
         }
 
         int bestMoveValue;
@@ -56,7 +56,7 @@ public class AlphaBetaRunner implements Runnable {
             BoardManager bmClone = BoardManager.clone(bm);
             bmClone.updateBoard(translatedMove);
 
-            int value = -1 * alphaBeta(currentDepth - 1, nextPlayer, bmClone, -1 * beta, -1 * bestMoveValue);
+            int value = -1 * alphaBeta(currentDepth - 1, nextPlayer, bm,  bmClone, -1 * beta, -1 * bestMoveValue);
 
             if (bestMoveValue < value) {
                 bestMoveValue = value;

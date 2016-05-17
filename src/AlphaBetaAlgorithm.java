@@ -18,19 +18,8 @@ public class AlphaBetaAlgorithm implements Algorithm {
     Move bestMove;
     int bestDepth;
 
-    private int myStoneWeight;
-    private int myDistanceWeight;
-    private int opponentStoneWeigh;
-    private int opponentDistanceWeight;
-
-
-    public AlphaBetaAlgorithm(BoardManager bm, int myStoneWeight, int myDistanceWeight, int opponentStoneWeigh, int opponentDistanceWeight) {
+    public AlphaBetaAlgorithm(BoardManager bm) {
         this.bm = bm;
-        this.myStoneWeight = myStoneWeight;
-        this.myDistanceWeight = myDistanceWeight;
-        this.opponentStoneWeigh = opponentStoneWeigh;
-        this.opponentDistanceWeight = opponentDistanceWeight;
-
 
         int cpuCores = Runtime.getRuntime().availableProcessors();
         threadPool = Executors.newFixedThreadPool(cpuCores);
@@ -81,7 +70,7 @@ public class AlphaBetaAlgorithm implements Algorithm {
         }
     }
 
-    int rateBoard(BoardManager bm, int player) {
+    int rateBoard(BoardManager oldBm, BoardManager bm, int player) {
         Board[] allBoards = bm.getAllBoards();
 
         int rating = 0;
@@ -89,10 +78,10 @@ public class AlphaBetaAlgorithm implements Algorithm {
         for (int currentPlayer = 0; currentPlayer < allBoards.length; currentPlayer++) {
             Board board = allBoards[currentPlayer];
             if (currentPlayer == player) {
-                rating += board.rate(currentPlayer, myStoneWeight, myDistanceWeight);
+                rating += board.rate(oldBm, currentPlayer);
             } else {
 
-                rating -= board.rate(currentPlayer, opponentStoneWeigh, opponentDistanceWeight);
+                rating -= board.rate(oldBm, currentPlayer) / 2;
             }
         }
 
@@ -138,6 +127,7 @@ public class AlphaBetaAlgorithm implements Algorithm {
         final Comparator<Move> COMPARATOR = new Comparator<Move>() {
             @Override
             public int compare(Move move1, Move move2) {
+//                return 0;
                 int rate1 = rate(move1, fields, player);
                 int rate2 = rate(move2, fields, player);
 
