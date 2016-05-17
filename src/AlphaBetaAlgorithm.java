@@ -138,20 +138,16 @@ public class AlphaBetaAlgorithm implements Algorithm {
         }
 
         int[][] fields = board.getFields();
-        final Comparator<Move> COMPARATOR = new Comparator<Move>() {
-            @Override
-            public int compare(Move move1, Move move2) {
-//                return 0;
-                int rate1 = rate(move1, fields, player);
-                int rate2 = rate(move2, fields, player);
+        final Comparator<Move> COMPARATOR = (move1, move2) -> {
+            int rate1 = rate(move1, fields, player);
+            int rate2 = rate(move2, fields, player);
 
-                if (rate1 < rate2) {
-                    return -1;
-                } else if (rate1 > rate2) {
-                    return 1;
-                } else {
-                    return 0;
-                }
+            if (rate1 > rate2) {
+                return -1;
+            } else if (rate1 < rate2) {
+                return 1;
+            } else {
+                return 0;
             }
         };
 
