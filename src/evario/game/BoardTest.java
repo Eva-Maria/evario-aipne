@@ -36,7 +36,23 @@ public class BoardTest {
                 xAndY = Board.translateFieldsCounterClockwise(xAndY);
 
                 Assert.assertTrue(Arrays.equals(xAndY, expected));
-                System.out.println("///////////");
+            }
+        }
+    }
+
+    @Test
+    public void testTranslatingReverse() throws Exception {
+        for (int y = 7; y >= 0; y--) {
+            int rowLength = y * 2 + 1;
+            for (int x = 0; x < rowLength; x++) {
+                int[] expected = {x, y};
+                int[] xAndY = {x, y};
+
+                xAndY = Board.translateFieldsCounterClockwise(xAndY);
+                xAndY = Board.translateFieldsClockwise(xAndY);
+
+                System.out.println(Arrays.toString(expected) + " > " + Arrays.toString(Board.translateFieldsClockwise(expected)));
+                Assert.assertTrue(Arrays.equals(xAndY, expected));
             }
         }
     }

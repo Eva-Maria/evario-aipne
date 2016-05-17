@@ -96,6 +96,16 @@ public class Board {
         return true;
     }
 
+    `
+
+    static int[] translateFieldsClockwise(final int[] xAndY) {
+        final int newY = (int) Math.ceil((14 - 2 * xAndY[1] + xAndY[0]) / 2f);
+        final int newX = (int) Math.ceil((14 - xAndY[0]) / 2f) * 2 - 2 * xAndY[1] + xAndY[0];
+
+        final int[] newXAndY = new int[]{newX, newY};
+        return newXAndY;
+    }
+
     static int[] translateFieldsCounterClockwise(final int[] xAndY) {
         final int newX = 2 * xAndY[1] - xAndY[0];
         final int newY = (int) Math.ceil((14 - xAndY[0]) / 2f);
@@ -130,20 +140,20 @@ public class Board {
 
     static int[] reverseTranslateFieldCoordinatesForPlayer(int[] xAndY, final int player) {
         if (player == THIRD_PLAYER) {
-            xAndY = translateFieldsCounterClockwise(xAndY);
+            return translateFieldsClockwise(xAndY);
         }
-        if (player == SECOND_PLAYER || player == THIRD_PLAYER) {
-            xAndY = translateFieldsCounterClockwise(xAndY);
+        if (player == SECOND_PLAYER) {
+            return translateFieldsCounterClockwise(xAndY);
         }
         return xAndY;
     }
 
     static int[] initialTranslateFieldCoordinatesForPlayer(int[] xAndY, final int player) {
         if (player == SECOND_PLAYER) {
-            xAndY = translateFieldsCounterClockwise(xAndY);
+            return translateFieldsClockwise(xAndY);
         }
-        if (player == SECOND_PLAYER || player == THIRD_PLAYER) {
-            xAndY = translateFieldsCounterClockwise(xAndY);
+        if (player == THIRD_PLAYER) {
+            return translateFieldsCounterClockwise(xAndY);
         }
         return xAndY;
     }
