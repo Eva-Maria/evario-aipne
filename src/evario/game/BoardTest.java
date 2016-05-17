@@ -1,3 +1,5 @@
+package evario.game;
+
 import lenz.htw.aipne.Move;
 import org.junit.After;
 import org.junit.Assert;

@@ -1,3 +1,7 @@
+package evario.utils;
+
+import evario.game.Board;
+
 import java.util.HashMap;
 
 /**
@@ -13,11 +17,11 @@ public class L {
 
     private static HashMap<Integer, String> map = new HashMap<>();
 
-    static void addPlayer(String name, int number) {
+    public static void addPlayer(String name, int number) {
         map.put(number, name);
     }
 
-    static void d(int number, String msg) {
+    public static void d(int number, String msg) {
         String color = blackColor;
         switch (number) {
             case Board.FIRST_PLAYER:

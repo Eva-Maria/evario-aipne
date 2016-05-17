@@ -1,3 +1,5 @@
+package evario.algorithms;
+
 import lenz.htw.aipne.Move;
 
 /**

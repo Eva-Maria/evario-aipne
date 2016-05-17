@@ -1,3 +1,6 @@
+package evario.game;
+
+import evario.Config;
 import lenz.htw.aipne.Move;
 
 import java.util.ArrayList;
@@ -15,15 +18,15 @@ public class Board {
     static final String PRINT_NEW_LINE = "\n";
 
     //TODO: migrate to init with 0 and players + 1?
-    static final int EMPTY_FIELD = -1;
-    static final int FIRST_PLAYER = 0;
-    static final int SECOND_PLAYER = 1;
-    static final int THIRD_PLAYER = 2;
+    public static final int EMPTY_FIELD = -1;
+    public static final int FIRST_PLAYER = 0;
+    public static final int SECOND_PLAYER = 1;
+    public static final int THIRD_PLAYER = 2;
 
     private final int[][] fields; //[y][x]
     private Move lastMove;
 
-    int playerStones = 8;
+    public int playerStones = 8;
 
     public Board() {
         int[][] fields = createEmptyFields();
@@ -58,7 +61,7 @@ public class Board {
         return fields;
     }
 
-    static boolean isMoveValid(Move move, int player, int[][] fields) {
+    public static boolean isMoveValid(Move move, int player, int[][] fields) {
         if (move.fromY < 0 || move.fromY >= 8) {
             return false;
         }
@@ -125,7 +128,7 @@ public class Board {
         return new Move(fromXAndY[0], fromXAndY[1], toXAndY[0], toXAndY[1]);
     }
 
-    static Move translateMoveForPlayer(Move move, int player) {
+    public static Move translateMoveForPlayer(Move move, int player) {
         int[] fromXAndY = initialTranslateFieldCoordinatesForPlayer(new int[]{move.fromX, move.fromY}, player);
         int[] toXAndY = initialTranslateFieldCoordinatesForPlayer(new int[]{move.toX, move.toY}, player);
         return new Move(fromXAndY[0], fromXAndY[1], toXAndY[0], toXAndY[1]);

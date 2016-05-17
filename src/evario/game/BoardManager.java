@@ -1,3 +1,5 @@
+package evario.game;
+
 import lenz.htw.aipne.Move;
 
 /**
@@ -8,7 +10,7 @@ public class BoardManager {
     public static final String EXCEPTION_NO_PLAYER = "No player found";
     Board[] boards;
 
-    int myPlayerNumber;
+    public int myPlayerNumber;
 
     public BoardManager(int myPlayerNumber) {
         this.myPlayerNumber = myPlayerNumber;
@@ -65,11 +67,11 @@ public class BoardManager {
         return boards[Board.FIRST_PLAYER];
     }
 
-    Board getMyBoard() {
+    public Board getMyBoard() {
         return boards[myPlayerNumber];
     }
 
-    Board[] getAllBoards() {
+    public Board[] getAllBoards() {
         return boards;
     }
 

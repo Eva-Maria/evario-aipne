@@ -1,3 +1,7 @@
+package evario.utils;
+
+import evario.Config;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
@@ -8,7 +12,7 @@ import java.nio.file.StandardOpenOption;
 /**
  * Created by m on 5/17/16.
  */
-class SystemOutInterceptor extends PrintStream {
+public class SystemOutInterceptor extends PrintStream {
 
     static final String FINAL_RESULT = "Final result:";
     static final String EXPORT = "EXP>";
@@ -38,7 +42,7 @@ class SystemOutInterceptor extends PrintStream {
         }
     };
 
-    SystemOutInterceptor(OutputStream out) {
+    public SystemOutInterceptor(OutputStream out) {
         super(out, true);
         buffer = new StringBuffer();
         finalBuffer = new StringBuffer();

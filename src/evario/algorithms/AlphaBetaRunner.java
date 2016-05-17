@@ -1,3 +1,8 @@
+package evario.algorithms;
+
+import evario.game.Board;
+import evario.game.BoardManager;
+import evario.utils.L;
 import lenz.htw.aipne.Move;
 
 import java.util.ArrayList;

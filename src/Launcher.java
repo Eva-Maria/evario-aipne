@@ -1,3 +1,6 @@
+import evario.Client;
+import evario.Config;
+import evario.utils.SystemOutInterceptor;
 import lenz.htw.aipne.Server;
 
 import java.io.IOException;
@@ -8,16 +11,20 @@ import java.io.PrintStream;
  */
 public class Launcher {
 
+    static final String SERVER_IS_ALREADY_RUNNING_DO_NOTHING = "Server is already running. Do nothing.";
+    static final String MODE_AUTO = "auto";
+    static final String MODE_FULLAUTO = "fullauto";
+
     static final Runnable serverLauncher = () -> {
         try {
             Server.main(Config.SERVER_ARGS);
         } catch (Exception e) {
-            System.out.println("Server is already running. Do nothing.");
+            System.out.println(SERVER_IS_ALREADY_RUNNING_DO_NOTHING);
         }
     };
 
     public static void main(String... args) throws IOException {
-        String hostName = "127.0.0.1";
+        String hostName = Config.HOSTNAME;
 
         wrapSystemOut();
 
@@ -26,14 +33,14 @@ public class Launcher {
         }
 
         if (args.length >= 2) {
-            if (args[1].equals("auto")) {
+            if (args[1].equals(MODE_AUTO)) {
                 new Thread(serverLauncher).start();
                 new Client(hostName);
                 new Client(hostName);
                 return;
             }
 
-            if (args[1].equals("fullauto")) {
+            if (args[1].equals(MODE_FULLAUTO)) {
                 new Thread(serverLauncher).start();
                 new Client(hostName);
                 new Client(hostName);
@@ -50,5 +57,4 @@ public class Launcher {
         PrintStream interceptor = new SystemOutInterceptor(origOut);
         System.setOut(interceptor);
     }
-
 }

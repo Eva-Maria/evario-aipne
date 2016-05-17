@@ -1,3 +1,9 @@
+package evario.algorithms;
+
+import evario.Config;
+import evario.game.Board;
+import evario.game.BoardManager;
+import evario.utils.L;
 import lenz.htw.aipne.Move;
 
 import java.util.ArrayList;
@@ -13,7 +19,6 @@ import java.util.concurrent.TimeUnit;
 public class AlphaBetaAlgorithm implements Algorithm {
 
     private final ExecutorService threadPool;
-
 
     private BoardManager bm;
     int[] depths;

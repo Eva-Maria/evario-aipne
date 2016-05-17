@@ -1,3 +1,8 @@
+package evario;
+
+import evario.algorithms.Algorithm;
+import evario.game.BoardManager;
+import evario.utils.L;
 import lenz.htw.aipne.Move;
 import lenz.htw.aipne.net.NetworkClient;
 
