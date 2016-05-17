@@ -57,7 +57,7 @@ public class AlphaBetaRunner implements Runnable {
         final int nextPlayer = (player + 1) % 3;
         int bestMoveValue = alpha;
 
-        for (Move m : allPossibleMoves) {
+        for (final Move m : allPossibleMoves) {
             final Move translatedMove = Board.translateMoveForPlayer(m, player);
 
             final BoardManager bmClone = BoardManager.clone(bm);

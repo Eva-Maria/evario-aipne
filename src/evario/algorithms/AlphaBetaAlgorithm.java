@@ -83,7 +83,7 @@ public class AlphaBetaAlgorithm implements Algorithm {
         new AlphaBetaRunner(depths[0], clonedBm, this, randomId).run();
     }
 
-    synchronized void setBestMove(int depth, Move move) {
+    synchronized void setBestMove(final int depth, final Move move) {
         if (bestDepth < depth || bestMove == null) {
             bestMove = move;
             bestDepth = depth;

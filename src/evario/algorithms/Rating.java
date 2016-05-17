@@ -15,10 +15,10 @@ public class Rating {
         }
 
         if (move.fromX % 2 == 0) {
-            int rowLength = move.toY * 2 + 1;
+            final int rowLength = move.toY * 2 + 1;
 
             if (move.toX != 0 && move.toX < rowLength - 1) {
-                int neighbour = fields[move.toY][move.toX];
+                final int neighbour = fields[move.toY][move.toX];
                 if (neighbour != Board.EMPTY_FIELD && neighbour != player) {
                     rating += Config.ALPHA_BETA_ALGORITHM_WEIGHT_BEAT_OPPONENT;
                 }
@@ -41,10 +41,10 @@ public class Rating {
 
         outerLoop:
         for (int y = fields.length - 1; y >= 0; y--) {
-            int rowLength = y * 2 + 1;
+            final int rowLength = y * 2 + 1;
 
             for (int x = 0; x < rowLength; x++) {
-                int field = fields[y][x];
+                final int field = fields[y][x];
                 if (field != player) {
                     continue;
                 }
@@ -62,7 +62,7 @@ public class Rating {
                 }
 
                 if (x % 2 != 0) {
-                    int neighbour = oldFields[y][x];
+                    final int neighbour = oldFields[y][x];
                     if (neighbour != Board.EMPTY_FIELD && neighbour != player) {
 //                            L.d(player, "detected opponent, was previous beaten on " + x + "," + y);
 //                            L.d(player, "\n" + oldBoard.toString());

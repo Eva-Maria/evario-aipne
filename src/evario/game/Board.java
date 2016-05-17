@@ -36,27 +36,26 @@ public class Board {
         this.fields = fields;
     }
 
-    public void makeMove(Move move, int player) {
+    public void makeMove(final Move move, final int player) {
         fields[move.fromY][move.fromX] = EMPTY_FIELD;
         fields[move.toY][move.toX] = player;
 
         lastMove = move;
     }
 
-    public int determinePlayerFrom(Move move) {
+    public int determinePlayerFrom(final Move move) {
         return fields[move.fromY][move.fromX];
     }
 
-    public int determinePlayerTo(Move move) {
+    public int determinePlayerTo(final Move move) {
         return fields[move.toY][move.toX];
     }
 
     public int[][] getFields() {
-        // Only for tests
         return fields;
     }
 
-    public static boolean isMoveValid(Move move, int player, int[][] fields) {
+    public static boolean isMoveValid(final Move move, final int player, final int[][] fields) {
         if (move.fromY < 0 || move.fromY >= 8) {
             return false;
         }
@@ -97,16 +96,16 @@ public class Board {
         return true;
     }
 
-    static int[] translateFieldsCounterClockwise(int[] xAndY) {
-        int newX = 2 * xAndY[1] - xAndY[0];
-        int newY = (int) Math.ceil((14 - xAndY[0]) / 2f);
+    static int[] translateFieldsCounterClockwise(final int[] xAndY) {
+        final int newX = 2 * xAndY[1] - xAndY[0];
+        final int newY = (int) Math.ceil((14 - xAndY[0]) / 2f);
 
-        int[] newXAndY = {newX, newY};
+        final int[] newXAndY = {newX, newY};
 
         return newXAndY;
     }
 
-    static boolean isOnField(int[] newXAndY) {
+    static boolean isOnField(final int[] newXAndY) {
         if (newXAndY[1] < 0 || newXAndY[1] >= 8) {
             return false;
         }
@@ -117,19 +116,19 @@ public class Board {
         return true;
     }
 
-    static Move translateMoveForPlayerReverse(Move move, int player) {
-        int[] fromXAndY = reverseTranslateFieldCoordinatesForPlayer(new int[]{move.fromX, move.fromY}, player);
-        int[] toXAndY = reverseTranslateFieldCoordinatesForPlayer(new int[]{move.toX, move.toY}, player);
+    static Move translateMoveForPlayerReverse(final Move move, final int player) {
+        final int[] fromXAndY = reverseTranslateFieldCoordinatesForPlayer(new int[]{move.fromX, move.fromY}, player);
+        final int[] toXAndY = reverseTranslateFieldCoordinatesForPlayer(new int[]{move.toX, move.toY}, player);
         return new Move(fromXAndY[0], fromXAndY[1], toXAndY[0], toXAndY[1]);
     }
 
-    public static Move translateMoveForPlayer(Move move, int player) {
-        int[] fromXAndY = initialTranslateFieldCoordinatesForPlayer(new int[]{move.fromX, move.fromY}, player);
-        int[] toXAndY = initialTranslateFieldCoordinatesForPlayer(new int[]{move.toX, move.toY}, player);
+    public static Move translateMoveForPlayer(final Move move, final int player) {
+        final int[] fromXAndY = initialTranslateFieldCoordinatesForPlayer(new int[]{move.fromX, move.fromY}, player);
+        final int[] toXAndY = initialTranslateFieldCoordinatesForPlayer(new int[]{move.toX, move.toY}, player);
         return new Move(fromXAndY[0], fromXAndY[1], toXAndY[0], toXAndY[1]);
     }
 
-    static int[] reverseTranslateFieldCoordinatesForPlayer(int[] xAndY, int player) {
+    static int[] reverseTranslateFieldCoordinatesForPlayer(int[] xAndY, final int player) {
         if (player == THIRD_PLAYER) {
             xAndY = translateFieldsCounterClockwise(xAndY);
         }
@@ -139,7 +138,7 @@ public class Board {
         return xAndY;
     }
 
-    static int[] initialTranslateFieldCoordinatesForPlayer(int[] xAndY, int player) {
+    static int[] initialTranslateFieldCoordinatesForPlayer(int[] xAndY, final int player) {
         if (player == SECOND_PLAYER) {
             xAndY = translateFieldsCounterClockwise(xAndY);
         }
@@ -149,8 +148,8 @@ public class Board {
         return xAndY;
     }
 
-    static void initialTranslateBoardForPlayer(Board board, int player) {
-        Board cloned = Board.clone(board);
+    static void initialTranslateBoardForPlayer(final Board board, final int player) {
+        final Board cloned = Board.clone(board);
         for (int y = 7; y >= 0; y--) {
             int rowLength = y * 2 + 1;
 
@@ -162,8 +161,8 @@ public class Board {
         }
     }
 
-    static Board clone(Board board) {
-        Board cloned = new Board();
+    static Board clone(final Board board) {
+        final Board cloned = new Board();
 
         for (int y = 0; y < board.fields.length; y++) {
             cloned.fields[y] = Arrays.copyOf(board.fields[y], board.fields[y].length);
@@ -178,9 +177,9 @@ public class Board {
     }
 
     static int[][] createEmptyFields() {
-        int[][] fields = new int[8][];
+        final int[][] fields = new int[8][];
         for (int y = fields.length - 1; y >= 0; y--) {
-            int rowLength = y * 2 + 1;
+            final int rowLength = y * 2 + 1;
             fields[y] = new int[rowLength];
 
             for (int x = 0; x < rowLength; x++) {
@@ -190,7 +189,7 @@ public class Board {
         return fields;
     }
 
-    static void initPlayer(int[][] fields, int player) {
+    static void initPlayer(final int[][] fields, final int player) {
         ArrayList<int[]> initialFields = new ArrayList<>();
         initialFields.add(new int[]{4, 7});
         initialFields.add(new int[]{5, 7});
@@ -202,12 +201,12 @@ public class Board {
         initialFields.add(new int[]{6, 6});
 
         for (int[] initialField : initialFields) {
-            int[] xAndY = initialTranslateFieldCoordinatesForPlayer(initialField, player);
+            final int[] xAndY = initialTranslateFieldCoordinatesForPlayer(initialField, player);
             setPlayerOnField(player, xAndY, fields);
         }
     }
 
-    static boolean setPlayerOnField(int player, int[] xAndY, int[][] fields) {
+    static boolean setPlayerOnField(final int player, final int[] xAndY, final int[][] fields) {
         if (isOnField(xAndY)) {
             fields[xAndY[1]][xAndY[0]] = player;
             return true;
