@@ -25,7 +25,6 @@ public class AlphaBetaRunner implements Runnable {
     public void run() {
         long timeStart = System.currentTimeMillis();
 
-//        int rating = alphaBeta(depth, bm.myPlayerNumber, bm, bm, Integer.MIN_VALUE, Integer.MAX_VALUE);
         int rating = alphaBeta(depth, bm.myPlayerNumber, bm, bm, Integer.MIN_VALUE, Integer.MAX_VALUE);
 
         long timeUsed = System.currentTimeMillis() - timeStart;

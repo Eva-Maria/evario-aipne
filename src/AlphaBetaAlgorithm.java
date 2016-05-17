@@ -57,7 +57,6 @@ public class AlphaBetaAlgorithm implements Algorithm {
 
             try {
                 threadPool.awaitTermination(timeLimitMillis - 300, TimeUnit.MILLISECONDS);
-//                threadPool.awaitTermination(350, TimeUnit.MILLISECONDS);
                 for (AlphaBetaRunner workerThread : workerThreads) {
                     workerThread.interrupt();
                 }
@@ -177,20 +176,6 @@ public class AlphaBetaAlgorithm implements Algorithm {
 
             validMovesSorted.add(move);
         }
-
-//        if(validMovesSorted.size() > 0) {
-//            ArrayList<Move> objects = new ArrayList<>();
-//            objects.add(validMovesSorted.get(0));
-//            return objects;
-//        }
-
-        // L.d(player, "Valid moves: " + validMovesSorted.size());
-
-//        String movePrint = "";
-//        for (Move move : validMovesSorted) {
-//            movePrint += move + "/"+ rate(move, fields, player) + ",";
-//        }
-//        L.d(player, "found moves " + movePrint);
 
         return validMovesSorted;
     }
