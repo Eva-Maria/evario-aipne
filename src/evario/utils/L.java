@@ -15,10 +15,10 @@ public class L {
     final static String redColor = (char) 27 + "[31m";
     final static String greenColor = (char) 27 + "[32m";
 
-    private static HashMap<Integer, String> map = new HashMap<>();
+    private final static HashMap<Integer, String> players = new HashMap<>();
 
     public static void addPlayer(String name, int number) {
-        map.put(number, name);
+        players.put(number, name);
     }
 
     public static void d(int number, String msg) {
@@ -35,10 +35,10 @@ public class L {
                 break;
         }
 
-        System.out.println(color + "(" + map.get(number) + " / " + number + ") " + msg + blackColor);
+        System.out.println(color + "(" + players.get(number) + " / " + number + ") " + msg + blackColor);
     }
 
     public static void export(int number, String msg) {
-        System.out.println(SystemOutInterceptor.EXPORT + map.get(number) + ": " + msg);
+        System.out.println(SystemOutInterceptor.EXPORT + players.get(number) + ": " + msg);
     }
 }
