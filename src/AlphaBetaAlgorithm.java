@@ -177,7 +177,6 @@ public class AlphaBetaAlgorithm implements Algorithm {
 
     public static int rate(Move move, int[][] fields, int player) {
         int rating = 0;
-        int rowLength = move.fromY * 2 + 1;
         if (move.toY == 0 && move.toX == 0) {
             rating += 2;
         } else {
@@ -185,13 +184,10 @@ public class AlphaBetaAlgorithm implements Algorithm {
         }
 
         if (move.fromX % 2 == 0) {
-            if (move.fromX != 0) {
-                int neighbour = fields[move.fromY][move.fromX - 1];
-                if (neighbour != Board.EMPTY_FIELD && neighbour != player) {
-                    rating += 3;
-                }
-            } else if (move.fromX < rowLength - 1) {
-                int neighbour = fields[move.fromY][move.fromX + 1];
+            int rowLength = move.toY * 2 + 1;
+
+            if (move.toX != 0 && move.toX < rowLength - 1) {
+                int neighbour = fields[move.toY][move.toX];
                 if (neighbour != Board.EMPTY_FIELD && neighbour != player) {
                     rating += 3;
                 }
