@@ -8,11 +8,12 @@ import lenz.htw.aipne.Move;
 public class BoardManager {
 
     public static final String EXCEPTION_NO_PLAYER = "No player found";
+
     Board[] boards;
 
     public int myPlayerNumber;
 
-    public BoardManager(int myPlayerNumber) {
+    public BoardManager(final int myPlayerNumber) {
         this.myPlayerNumber = myPlayerNumber;
         boards = new Board[3];
 
@@ -48,7 +49,7 @@ public class BoardManager {
         return currentPlayer;
     }
 
-    private void updateAllBoards(Move move, int currentPlayer) {
+    private void updateAllBoards(final Move move, final int currentPlayer) {
         int player = currentPlayer;
         int playersLeft = 3;
 
@@ -56,7 +57,7 @@ public class BoardManager {
         while (playersLeft > 0) {
             playersLeft--;
 
-            Move translatedMove = Board.translateMoveForPlayerReverse(move, player);
+            final Move translatedMove = Board.translateMoveForPlayerReverse(move, player);
             boards[player].makeMove(translatedMove, currentPlayer);
 
             player = ++player % 3;
@@ -75,7 +76,7 @@ public class BoardManager {
         return boards;
     }
 
-    public static BoardManager clone(BoardManager bm) {
+    public static BoardManager clone(final BoardManager bm) {
         Board[] clonedBoards = new Board[bm.boards.length];
         for (int i = 0; i < bm.boards.length; i++) {
             clonedBoards[i] = Board.clone(bm.boards[i]);

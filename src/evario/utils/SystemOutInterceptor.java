@@ -40,7 +40,7 @@ public class SystemOutInterceptor extends PrintStream {
     }
 
     @Override
-    public void print(String s) {
+    public void print(final String s) {
         if (s.trim().startsWith(EXPORT)) {
             String info = s.replace(EXPORT, "");
             buffer.append(info).append(DELIMITER);
@@ -57,7 +57,7 @@ public class SystemOutInterceptor extends PrintStream {
         super.print(s);
     }
 
-    void writeToFile(String s) {
+    void writeToFile(final String s) {
         try {
             buffer.append(NEW_LINE);
             Files.write(path, s.getBytes(), StandardOpenOption.CREATE, StandardOpenOption.APPEND);

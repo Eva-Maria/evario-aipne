@@ -8,7 +8,7 @@ import lenz.htw.aipne.Move;
  * Created by m on 5/17/16.
  */
 public class Rating {
-    public static int rateMove(Move move, int[][] fields, int player) {
+    public static int rateMove(final Move move, final int[][] fields, final int player) {
         int rating = 0;
         if (move.toY == 0 && move.toX == 0) {
             rating += Config.ALPHA_BETA_ALGORITHM_WEIGHT_CORNER;
@@ -33,7 +33,7 @@ public class Rating {
         return rating;
     }
 
-    public static int rateBoard(Board oldBoard, Board currentBoard, int player) {
+    public static int rateBoard(final Board oldBoard, final Board currentBoard, final int player) {
         int rating = 0;
         int[][] fields = currentBoard.getFields();
         int[][] oldFields = oldBoard.getFields();

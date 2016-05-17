@@ -21,7 +21,7 @@ public class AlphaBetaRunner implements Runnable {
     private Move bestMove;
     private boolean isInterrupted;
 
-    public AlphaBetaRunner(int depth, BoardManager bm, AlphaBetaAlgorithm algorithm, int id) {
+    public AlphaBetaRunner(final int depth, final BoardManager bm, final AlphaBetaAlgorithm algorithm, final int id) {
         this.depth = depth;
         this.bm = bm;
         this.algorithm = algorithm;
@@ -35,7 +35,7 @@ public class AlphaBetaRunner implements Runnable {
         final int rating = alphaBeta(depth, bm.myPlayerNumber, bm, bm, -10000, +10000);
 
         final long timeUsed = System.currentTimeMillis() - timeStart;
-        L.d(bm.myPlayerNumber, "THREAD" + id + ">\ttime:" + timeUsed + "\t,depth:" + depth + "\t,move:" + bestMove + "\t,rating:" + rating + "\t,interrupted:" + isInterrupted);
+        L.d(bm.myPlayerNumber, "THREAD " + id + ">\ttime:" + timeUsed + "\t,depth:" + depth + "\t,move:" + bestMove + "\t,rating:" + rating + "\t,interrupted:" + isInterrupted);
         algorithm.setBestMove(depth, bestMove);
     }
 
@@ -54,9 +54,8 @@ public class AlphaBetaRunner implements Runnable {
             return rateAllBoards(oldBm, bm, player);
         }
 
-        int bestMoveValue;
         final int nextPlayer = (player + 1) % 3;
-        bestMoveValue = alpha;
+        int bestMoveValue = alpha;
 
         for (Move m : allPossibleMoves) {
             final Move translatedMove = Board.translateMoveForPlayer(m, player);
@@ -88,7 +87,7 @@ public class AlphaBetaRunner implements Runnable {
         this.isInterrupted = true;
     }
 
-    private static int rateAllBoards(BoardManager oldBm, BoardManager bm, int player) {
+    private static int rateAllBoards(final BoardManager oldBm, final BoardManager bm, final int player) {
         final Board[] allBoards = bm.getAllBoards();
         final Board[] oldAllBoards = oldBm.getAllBoards();
 
@@ -108,15 +107,16 @@ public class AlphaBetaRunner implements Runnable {
         return rating;
     }
 
-    private static ArrayList<Move> getAllMoves(BoardManager bm, int player) {
+    private static ArrayList<Move> getAllMoves(final BoardManager bm, final int player) {
         final Board board = bm.getAllBoards()[player];
+        final int[][] fields = board.getFields();
 
         final ArrayList<Move> moves = new ArrayList<>();
         int playerStones = 0;
 
         outerLoop:
         for (int fromY = 7; fromY >= 0; fromY--) {
-            int fromRowLength = fromY * 2 + 1;
+            final int fromRowLength = fromY * 2 + 1;
             for (int fromX = 0; fromX < fromRowLength; fromX++) {
 
                 boolean isPlayerOnField = board.isPlayerOnField(fromX, fromY, player);
@@ -143,7 +143,6 @@ public class AlphaBetaRunner implements Runnable {
             return moves;
         }
 
-        final int[][] fields = board.getFields();
         final Comparator<Move> COMPARATOR = (move1, move2) -> {
             int rate1 = Rating.rateMove(move1, fields, player);
             int rate2 = Rating.rateMove(move2, fields, player);
@@ -157,7 +156,7 @@ public class AlphaBetaRunner implements Runnable {
             }
         };
 
-        final ArrayList<Move> validMovesSorted = new ArrayList<Move>() {
+        final ArrayList<Move> validMovesSorted = new ArrayList<Move>(16) {
             public boolean add(Move mt) {
                 int index = Collections.binarySearch(this, mt, COMPARATOR);
                 if (index < 0) {
