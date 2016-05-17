@@ -47,10 +47,10 @@ public class Client implements Runnable {
         Algorithm algorithm = null;
         switch (myPlayerNumber) {
             case Board.FIRST_PLAYER:
-                algorithm = new AlphaBetaAlgorithm(bm);
+                algorithm = new RandomAlgorithm(bm);
                 break;
             case Board.SECOND_PLAYER:
-                algorithm = new AlphaBetaAlgorithm(bm);
+                algorithm = new RandomAlgorithm(bm);
                 break;
             case Board.THIRD_PLAYER:
                 algorithm = new AlphaBetaAlgorithm(bm);

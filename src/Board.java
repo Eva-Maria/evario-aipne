@@ -249,9 +249,9 @@ public class Board {
         return header.toString() + PRINT_NEW_LINE + builder.toString();
     }
 
-    public int rate(BoardManager oldBm, int player) {
+    public int rate(Board oldBoard, int player) {
         int rating = 0;
-        int[][] oldFields = oldBm.getAllBoards()[player].getFields();
+        int[][] oldFields = oldBoard.getFields();
 
         for (int y = this.fields.length - 1; y >= 0; y--) {
             int rowLength = y * 2 + 1;

@@ -56,7 +56,8 @@ public class AlphaBetaAlgorithm implements Algorithm {
             }
 
             try {
-                threadPool.awaitTermination(timeLimitMillis - 300, TimeUnit.MILLISECONDS);
+//                threadPool.awaitTermination(timeLimitMillis - 300, TimeUnit.MILLISECONDS);
+                threadPool.awaitTermination(350, TimeUnit.MILLISECONDS);
                 for (AlphaBetaRunner workerThread : workerThreads) {
                     workerThread.interrupt();
                 }
@@ -64,6 +65,11 @@ public class AlphaBetaAlgorithm implements Algorithm {
                 e.printStackTrace();
             }
         } else {
+            try {
+                Thread.sleep(350);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
             BoardManager clonedBm = BoardManager.clone(bm);
             new AlphaBetaRunner(depths[0], clonedBm, this, randomId).run();
         }
@@ -86,16 +92,18 @@ public class AlphaBetaAlgorithm implements Algorithm {
 
     int rateBoard(BoardManager oldBm, BoardManager bm, int player) {
         Board[] allBoards = bm.getAllBoards();
+        Board[] oldAllBoards = oldBm.getAllBoards();
 
         int rating = 0;
+      //  rating += allBoards[player].rate(oldAllBoards[player], player);
 
         for (int currentPlayer = 0; currentPlayer < allBoards.length; currentPlayer++) {
             Board board = allBoards[currentPlayer];
+            Board oldBoard = oldAllBoards[currentPlayer];
             if (currentPlayer == player) {
-                rating += board.rate(oldBm, currentPlayer);
+                rating += board.rate(oldBoard, currentPlayer);
             } else {
-
-                rating -= board.rate(oldBm, currentPlayer) / 2;
+                rating -= board.rate(oldBoard, currentPlayer);
             }
         }
 
@@ -170,18 +178,30 @@ public class AlphaBetaAlgorithm implements Algorithm {
             validMovesSorted.add(move);
         }
 
+//        if(validMovesSorted.size() > 0) {
+//            ArrayList<Move> objects = new ArrayList<>();
+//            objects.add(validMovesSorted.get(0));
+//            return objects;
+//        }
+
         // L.d(player, "Valid moves: " + validMovesSorted.size());
+
+//        String movePrint = "";
+//        for (Move move : validMovesSorted) {
+//            movePrint += move + "/"+ rate(move, fields, player) + ",";
+//        }
+//        L.d(player, "found moves " + movePrint);
 
         return validMovesSorted;
     }
 
     public static int rate(Move move, int[][] fields, int player) {
         int rating = 0;
-        if (move.toY == 0 && move.toX == 0) {
-            rating += 2;
-        } else {
-            rating += 1;
-        }
+//        if (move.toY == 0 && move.toX == 0) {
+//            rating += 2;
+//        } else {
+//            rating += 1;
+//        }
 
         if (move.fromX % 2 == 0) {
             int rowLength = move.toY * 2 + 1;
@@ -189,7 +209,7 @@ public class AlphaBetaAlgorithm implements Algorithm {
             if (move.toX != 0 && move.toX < rowLength - 1) {
                 int neighbour = fields[move.toY][move.toX];
                 if (neighbour != Board.EMPTY_FIELD && neighbour != player) {
-                    rating += 3;
+                    rating += 4;
                 }
             }
         }
