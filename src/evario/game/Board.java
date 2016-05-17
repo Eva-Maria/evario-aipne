@@ -1,6 +1,5 @@
 package evario.game;
 
-import evario.Config;
 import lenz.htw.aipne.Move;
 
 import java.util.ArrayList;
@@ -24,7 +23,7 @@ public class Board {
     public static final int THIRD_PLAYER = 2;
 
     private final int[][] fields; //[y][x]
-    private Move lastMove;
+    public Move lastMove;
 
     public int playerStones = 8;
 
@@ -250,41 +249,5 @@ public class Board {
         return header.toString() + PRINT_NEW_LINE + builder.toString();
     }
 
-    public int rate(Board oldBoard, int player) {
-        int rating = 0;
-        int[][] oldFields = oldBoard.getFields();
 
-        for (int y = this.fields.length - 1; y >= 0; y--) {
-            int rowLength = y * 2 + 1;
-
-            for (int x = 0; x < rowLength; x++) {
-                int field = this.fields[y][x];
-                int currentRating = 0;
-
-                if (field == player) {
-                    if (y == 0 && x == 0) {
-                        currentRating += Config.ALPHA_BETA_ALGORITHM_WEIGHT_CORNER;
-                    }
-
-                    if (x % 2 != 0) {
-                        int neighbour = oldFields[y][x];
-                        if (neighbour != EMPTY_FIELD && neighbour != player) {
-//                            L.d(player, "detected opponent, was previous beaten on " + x + "," + y);
-//                            L.d(player, "\n" + oldBoard.toString());
-//                            L.d(player, lastMove.toString());
-//                            L.d(player, "\n" + toString());
-                            currentRating += Config.ALPHA_BETA_ALGORITHM_WEIGHT_BEAT_OPPONENT;
-                        }
-                    }
-                    if (lastMove.toY < lastMove.fromY && lastMove.toY >= 4) {
-                        currentRating += Config.ALPHA_BETA_ALGORITHM_WEIGHT_MOVE_FORWARD_TO_CENTER;
-                    }
-
-                }
-
-                rating += currentRating;
-            }
-        }
-        return rating;
-    }
 }

@@ -26,25 +26,18 @@ public class AlphaBetaAlgorithm implements Algorithm {
     int bestDepth;
 
     public AlphaBetaAlgorithm(BoardManager bm) {
+        final int cpuCores = Config.ALPHA_BETA_ALGORITHM_USES_THREADS ? Runtime.getRuntime().availableProcessors() : 1;
+
         this.bm = bm;
-
-        int cpuCores = 1;
-        if (Config.ALPHA_BETA_ALGORITHM_USES_THREADS) {
-            cpuCores = Runtime.getRuntime().availableProcessors();
-            depths = new int[]{9, 12, 15, 6};
-        } else {
-            depths = new int[]{3};
-        }
-
-        threadPool = Executors.newFixedThreadPool(cpuCores);
-
+        this.depths = Config.ALPHA_BETA_ALGORITHM_DEPTHS;
+        this.threadPool = Executors.newFixedThreadPool(cpuCores);
     }
 
     @Override
     public Move getNextMove(long timeStartMillis, int timeLimitMillis) {
         bestMove = null;
 
-        int randomId = (int) (Math.random() * 1000);
+        final int randomId = (int) (Math.random() * 1000);
 
         if (Config.ALPHA_BETA_ALGORITHM_USES_THREADS) {
             ArrayList<AlphaBetaRunner> workerThreads = new ArrayList<>(depths.length);
@@ -76,8 +69,10 @@ public class AlphaBetaAlgorithm implements Algorithm {
             new AlphaBetaRunner(depths[0], clonedBm, this, randomId).run();
         }
 
-        long timeUsedMillis = System.currentTimeMillis() - timeStartMillis;
+        final long timeUsedMillis = System.currentTimeMillis() - timeStartMillis;
+
         L.d(bm.myPlayerNumber, "CLIENT " + randomId + "> time: " + timeUsedMillis + " ms" + " best Depth: " + bestDepth + ", best move : " + bestMove);
+
         if (bestMove == null) {
             return new Move(0, 0, 0, 0);
         }
@@ -97,15 +92,15 @@ public class AlphaBetaAlgorithm implements Algorithm {
         Board[] oldAllBoards = oldBm.getAllBoards();
 
         int rating = 0;
-      //  rating += allBoards[player].rate(oldAllBoards[player], player);
+        //  rating += allBoards[player].rateBoard(oldAllBoards[player], player);
 
         for (int currentPlayer = 0; currentPlayer < allBoards.length; currentPlayer++) {
             Board board = allBoards[currentPlayer];
             Board oldBoard = oldAllBoards[currentPlayer];
             if (currentPlayer == player) {
-                rating += board.rate(oldBoard, currentPlayer) * 2;
+                rating += Rating.rateBoard(oldBoard, board, currentPlayer) * 2;
             } else {
-                rating -= board.rate(oldBoard, currentPlayer);
+                rating -= Rating.rateBoard(oldBoard, board, currentPlayer);
             }
         }
 
@@ -149,8 +144,8 @@ public class AlphaBetaAlgorithm implements Algorithm {
 
         int[][] fields = board.getFields();
         final Comparator<Move> COMPARATOR = (move1, move2) -> {
-            int rate1 = rate(move1, fields, player);
-            int rate2 = rate(move2, fields, player);
+            int rate1 = Rating.rateMove(move1, fields, player);
+            int rate2 = Rating.rateMove(move2, fields, player);
 
             if (rate1 > rate2) {
                 return -1;
@@ -181,30 +176,5 @@ public class AlphaBetaAlgorithm implements Algorithm {
         }
 
         return validMovesSorted;
-    }
-
-    public static int rate(Move move, int[][] fields, int player) {
-        int rating = 0;
-        if (move.toY == 0 && move.toX == 0) {
-            rating += Config.ALPHA_BETA_ALGORITHM_WEIGHT_CORNER;
-        }
-
-        if (move.fromX % 2 == 0) {
-            int rowLength = move.toY * 2 + 1;
-
-            if (move.toX != 0 && move.toX < rowLength - 1) {
-                int neighbour = fields[move.toY][move.toX];
-                if (neighbour != Board.EMPTY_FIELD && neighbour != player) {
-                    rating += Config.ALPHA_BETA_ALGORITHM_WEIGHT_BEAT_OPPONENT;
-                }
-            }
-        }
-
-        if (move.toY < move.fromY && move.toY >= 4) {
-            rating += Config.ALPHA_BETA_ALGORITHM_WEIGHT_MOVE_FORWARD_TO_CENTER;
-        }
-
-
-        return rating;
     }
 }
