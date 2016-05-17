@@ -14,7 +14,7 @@ public class AlphaBetaAlgorithm implements Algorithm {
 
     private final ExecutorService threadPool;
 
-    private static final boolean USES_THREADS = false;
+    private static final boolean USES_THREADS = true;
 
     private BoardManager bm;
     int[] depths;
@@ -27,7 +27,7 @@ public class AlphaBetaAlgorithm implements Algorithm {
         int cpuCores = 1;
         if (USES_THREADS) {
             cpuCores = Runtime.getRuntime().availableProcessors();
-            depths = new int[]{11, 13, 15, 8};
+            depths = new int[]{9, 12, 15, 6};
         } else {
             depths = new int[]{3};
         }
@@ -56,8 +56,8 @@ public class AlphaBetaAlgorithm implements Algorithm {
             }
 
             try {
-//                threadPool.awaitTermination(timeLimitMillis - 300, TimeUnit.MILLISECONDS);
-                threadPool.awaitTermination(350, TimeUnit.MILLISECONDS);
+                threadPool.awaitTermination(timeLimitMillis - 300, TimeUnit.MILLISECONDS);
+//                threadPool.awaitTermination(350, TimeUnit.MILLISECONDS);
                 for (AlphaBetaRunner workerThread : workerThreads) {
                     workerThread.interrupt();
                 }
@@ -197,11 +197,11 @@ public class AlphaBetaAlgorithm implements Algorithm {
 
     public static int rate(Move move, int[][] fields, int player) {
         int rating = 0;
-//        if (move.toY == 0 && move.toX == 0) {
-//            rating += 2;
-//        } else {
-//            rating += 1;
-//        }
+        if (move.toY == 0 && move.toX == 0) {
+            rating += 2;
+        } else {
+            rating += 1;
+        }
 
         if (move.fromX % 2 == 0) {
             int rowLength = move.toY * 2 + 1;
@@ -209,7 +209,7 @@ public class AlphaBetaAlgorithm implements Algorithm {
             if (move.toX != 0 && move.toX < rowLength - 1) {
                 int neighbour = fields[move.toY][move.toX];
                 if (neighbour != Board.EMPTY_FIELD && neighbour != player) {
-                    rating += 4;
+                    rating += 1;
                 }
             }
         }

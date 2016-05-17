@@ -261,20 +261,20 @@ public class Board {
                 int currentRating = 0;
 
                 if (field == player) {
-//                    if (y == 0 && x == 0) {
-//                        currentRating += 4;
-//                    } else {
-//                        currentRating += 2;
-//                    }
+                    if (y == 0 && x == 0) {
+                        currentRating += 2;
+                    } else {
+                        currentRating += 1;
+                    }
 
                     if (x % 2 != 0) {
                         int neighbour = oldFields[y][x];
                         if (neighbour != EMPTY_FIELD && neighbour != player) {
                             L.d(player, "detected opponent, was previous beaten on " + x + "," + y);
-                            L.d(player, "\n" + oldBoard.toString());
-                            L.d(player, lastMove.toString());
-                            L.d(player, "\n" + toString());
-                            currentRating += 4;
+//                            L.d(player, "\n" + oldBoard.toString());
+//                            L.d(player, lastMove.toString());
+//                            L.d(player, "\n" + toString());
+                            currentRating += 1;
                         }
                     }
 
