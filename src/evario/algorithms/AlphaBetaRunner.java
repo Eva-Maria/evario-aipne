@@ -32,7 +32,7 @@ public class AlphaBetaRunner implements Runnable {
     public void run() {
         final long timeStart = System.currentTimeMillis();
 
-        final int rating = alphaBeta(depth, bm.myPlayerNumber, bm, bm, Integer.MIN_VALUE, Integer.MAX_VALUE);
+        final int rating = alphaBeta(depth, bm.myPlayerNumber, bm, bm, -10000, +10000);
 
         final long timeUsed = System.currentTimeMillis() - timeStart;
         L.d(bm.myPlayerNumber, "THREAD" + id + ">\ttime:" + timeUsed + "\t,depth:" + depth + "\t,move:" + bestMove + "\t,rating:" + rating + "\t,interrupted:" + isInterrupted);
