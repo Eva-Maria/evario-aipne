@@ -13,6 +13,9 @@ import java.util.concurrent.TimeUnit;
 public class AlphaBetaAlgorithm implements Algorithm {
 
     private final ExecutorService threadPool;
+
+    private static final boolean USES_THREADS = false;
+
     private BoardManager bm;
     int[] depths;
     Move bestMove;
@@ -21,9 +24,16 @@ public class AlphaBetaAlgorithm implements Algorithm {
     public AlphaBetaAlgorithm(BoardManager bm) {
         this.bm = bm;
 
-        int cpuCores = Runtime.getRuntime().availableProcessors();
+        int cpuCores = 1;
+        if (USES_THREADS) {
+            cpuCores = Runtime.getRuntime().availableProcessors();
+            depths = new int[]{11, 13, 15, 8};
+        } else {
+            depths = new int[]{1};
+        }
+
         threadPool = Executors.newFixedThreadPool(cpuCores);
-        depths = new int[]{11, 13, 15, 8};
+
     }
 
     @Override
@@ -31,27 +41,31 @@ public class AlphaBetaAlgorithm implements Algorithm {
         bestMove = null;
 
         int randomId = (int) (Math.random() * 1000);
-        int numberOfWorkers = 5;
 
-        ArrayList<AlphaBetaRunner> workerThreads = new ArrayList<>(numberOfWorkers);
-        for (int depth : depths) {
-            BoardManager clonedBm = BoardManager.clone(bm);
-            final AlphaBetaRunner workerThread = new AlphaBetaRunner(depth, clonedBm, this, randomId);
-            workerThreads.add(workerThread);
+        if (USES_THREADS) {
 
-        }
-
-        for (AlphaBetaRunner workerThread : workerThreads) {
-            threadPool.execute(workerThread);
-        }
-
-        try {
-            threadPool.awaitTermination(timeLimitMillis - 300, TimeUnit.MILLISECONDS);
-            for (AlphaBetaRunner workerThread : workerThreads) {
-                workerThread.interrupt();
+            ArrayList<AlphaBetaRunner> workerThreads = new ArrayList<>(depths.length);
+            for (int depth : depths) {
+                BoardManager clonedBm = BoardManager.clone(bm);
+                final AlphaBetaRunner workerThread = new AlphaBetaRunner(depth, clonedBm, this, randomId);
+                workerThreads.add(workerThread);
             }
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+
+            for (AlphaBetaRunner workerThread : workerThreads) {
+                threadPool.execute(workerThread);
+            }
+
+            try {
+                threadPool.awaitTermination(timeLimitMillis - 300, TimeUnit.MILLISECONDS);
+                for (AlphaBetaRunner workerThread : workerThreads) {
+                    workerThread.interrupt();
+                }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        } else {
+            BoardManager clonedBm = BoardManager.clone(bm);
+            new AlphaBetaRunner(depths[0], clonedBm, this, randomId).run();
         }
 
         long timeUsedMillis = System.currentTimeMillis() - timeStartMillis;
