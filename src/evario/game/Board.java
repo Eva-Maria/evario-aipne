@@ -96,8 +96,6 @@ public class Board {
         return true;
     }
 
-    `
-
     static int[] translateFieldsClockwise(final int[] xAndY) {
         final int newY = (int) Math.ceil((14 - 2 * xAndY[1] + xAndY[0]) / 2f);
         final int newX = (int) Math.ceil((14 - xAndY[0]) / 2f) * 2 - 2 * xAndY[1] + xAndY[0];

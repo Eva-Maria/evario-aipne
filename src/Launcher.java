@@ -26,7 +26,7 @@ public class Launcher {
     public static void main(String... args) throws IOException {
         String hostName = Config.HOSTNAME;
 
-        wrapSystemOut();
+//        wrapSystemOut();
 
         if (args.length >= 1) {
             hostName = args[0];
