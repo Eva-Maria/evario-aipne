@@ -51,6 +51,7 @@ public class AlphaBetaRunner implements Runnable {
         final ArrayList<Move> allPossibleMoves = getAllMoves(bm, player);
 
         if (allPossibleMoves.size() == 0) {
+            L.d(bm.myPlayerNumber, "THREAD " + id + ">\ttime:" + "\t,depth:" + depth + "\t, no move left for depth " + currentDepth);
             return rateAllBoards(oldBm, bm, player);
         }
 
