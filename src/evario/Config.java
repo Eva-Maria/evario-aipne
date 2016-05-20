@@ -21,7 +21,7 @@ public class Config {
     public static final boolean RANDOM_ALGORITHM_SIMPLY_TAKES_FIRST_MOVE = false;
 
     public static final boolean ALPHA_BETA_ALGORITHM_USES_THREADS = true;
-    public static final int[] ALPHA_BETA_ALGORITHM_DEPTHS = new int[]{9, 12, 15, 6};
+    public static final int[] ALPHA_BETA_ALGORITHM_DEPTHS = new int[]{12, 11, 10, 9, 6};
     public static final int ALPHA_BETA_ALGORITHM_THREAD_LATENCY = 300;
 
     public static final int ALPHA_BETA_ALGORITHM_WEIGHT_CORNER = 2;

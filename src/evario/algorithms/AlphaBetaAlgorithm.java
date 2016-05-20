@@ -35,6 +35,7 @@ public class AlphaBetaAlgorithm implements Algorithm {
         bestMove = null;
 
         final int randomId = (int) (Math.random() * 1000);
+	L.d(bm.myPlayerNumber, "MASTER " + randomId + "> get next move");
 
         if (Config.ALPHA_BETA_ALGORITHM_USES_THREADS) {
             startMutliThread(timeLimitMillis, randomId);

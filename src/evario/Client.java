@@ -86,6 +86,7 @@ public class Client implements Runnable {
             }
 
             bm.updateBoard(move);
+            Runtime.getRuntime().gc();
         }
     }
 
